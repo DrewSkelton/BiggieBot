@@ -7,10 +7,10 @@ RUN ln -s /var/local data
 COPY package.json .
 RUN npm install
 
-COPY commands .
-COPY data .
-COPY features .
-COPY utils .
+COPY commands commands
+COPY data data
+COPY features features
+COPY utils utils
 COPY config.js .
 COPY index.js .
 
