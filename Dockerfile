@@ -1,8 +1,8 @@
 FROM node:alpine
-WORKDIR /usr/src/
+WORKDIR /usr/src
 
-VOLUME /var/local/
-RUN ln -s /var/local/ data/
+VOLUME /var/local
+RUN ln -s /var/local data
 
 COPY package.json .
 RUN npm install
