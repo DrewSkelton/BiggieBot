@@ -7,7 +7,6 @@ A fun Discord bot built by CS C&C with `discord.js`.
 
 ### Commands
 
-- `!hello` - Bot responds with a greeting  
 - `!help` - Displays all available commands and features  
 - `!setcounting` - Sets the current channel as the counting channel (Admin only)  
 - `!setdailyquestion` - Sets the current channel for daily questions (Admin only)  
