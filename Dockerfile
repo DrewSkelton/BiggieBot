@@ -9,4 +9,4 @@ RUN npm install
 
 RUN ln -s /var/local data
 
-CMD ["node", "index.js"]
+CMD ["npm", "start"]
