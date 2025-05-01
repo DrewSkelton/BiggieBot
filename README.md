@@ -3,24 +3,6 @@
 A fun Discord bot built by CS C&C with `discord.js`.  
 **THIS BOT IS BIG!!!!!!!! #MakeAmericaBigAgain**
 
-## 🚀 Setup
-
-1. Clone this repository  
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Create a bot in the [Discord Developer Portal](https://discord.com/developers/applications)  
-4. Get your bot token and add it to the `.env` file  
-5. Invite the bot to your server with the required permissions  
-6. Run the bot:
-
-   ```bash
-   npm start
-   ```
-
 ## ✨ Features
 
 ### Commands
@@ -130,7 +112,7 @@ module.exports = {
 ```
 
 > The bot will update all commands and features on reload.  
-> Currently running locally via `npm start`; deployment to Ben's server is planned.
+> Currently running locally via `npm start`; will probably deploy to Ben's server even(tuah)lly.
 
 ---
 
