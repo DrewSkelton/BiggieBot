@@ -4,10 +4,8 @@ VOLUME /var/local
 
 WORKDIR /usr/src
 
-COPY package.json .
+COPY . .
 RUN npm install
-
-COPY index.js .
 
 RUN ln -s /var/local data
 
