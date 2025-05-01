@@ -8,16 +8,15 @@ module.exports = {
   
   // Questions pool
   questions: [
-    "What's your favorite programming language?",
-    "If you could add one feature to Discord, what would it be?",
-    "What project are you working on right now?",
-    "What's the most challenging bug you've ever fixed?",
-    "What's your favorite development tool or IDE?",
-    "What technology are you most excited to learn next?",
-    "What's your favorite tech-related YouTube channel?",
-    "Do you prefer frontend, backend, or full-stack development?",
-    "What's your preferred method for debugging code?",
-    "Share a coding tip that saved you a lot of time!"
+    "If you could have infinite food or infinite money (you can only spend 30$ on food every day), which would you choose?",
+    "If you could get rid of any fictional character, who would it be?",
+    "What's your spirit animal?",
+    "If you had to eat one food for the rest of your life, what would it be?",
+    "What is your least favorite food?",
+    "What's your favorite song right now?",
+    "Would you rather bite ice cream or a slushy?",
+    "What is the best chicken restaurant?",
+    "What is the worst type of food to get at a restaurant and why is it pizza?",
   ],
   
   // Settings storage
