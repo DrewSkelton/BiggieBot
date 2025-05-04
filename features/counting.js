@@ -59,7 +59,7 @@ module.exports = {
       }
       
       // Check if the same user is trying to count twice in a row
-      if (false){//message.author.id === this.lastUserId) {
+      if (message.author.id === this.lastUserId) {
         // Store the current count before resetting it
         const previousCount = this.currentCount;
         
