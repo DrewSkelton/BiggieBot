@@ -35,15 +35,16 @@ module.exports = {
       let number = null;
       
       // First try to parse as a regular integer
-      if (/^\d+$/.test(content)) {
-        number = parseInt(content);
-      } 
+      // Because the math expression already will parse a normal integer, this step isn't needed
+      //if (/^\d+$/.test(content)) {
+      //  number = parseInt(content);
+      //}
       // Try to parse as a Roman numeral
-      else if (/^[IVXLCDMivxlcdm]+$/.test(content)) {
+      if (/^[IVXLCDMivxlcdm]+$/.test(content)) {
         number = this.parseRomanNumeral(content);
       }
       // Try to evaluate as a math expression
-      else if (/^[\d\s+\-*/().]+$/.test(content)) {
+      else if (/^[\d\s+\-*/().bBoOxX]+$/.test(content)) {
         try {
           number = this.evaluateMathExpression(content);
         } catch (error) {
@@ -58,7 +59,7 @@ module.exports = {
       }
       
       // Check if the same user is trying to count twice in a row
-      if (message.author.id === this.lastUserId) {
+      if (false){//message.author.id === this.lastUserId) {
         // Store the current count before resetting it
         const previousCount = this.currentCount;
         
