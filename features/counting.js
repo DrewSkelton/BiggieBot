@@ -44,7 +44,7 @@ module.exports = {
         number = this.parseRomanNumeral(content);
       }
       // Try to evaluate as a math expression
-      else if (/^[\d\s+\-*/().bBoOxX]+$/.test(content)) {
+      else if (/^[\d\s+\-*\/().OoXx\[A-Fa-f\]]+$/.test(content)) {
         try {
           number = this.evaluateMathExpression(content);
         } catch (error) {
