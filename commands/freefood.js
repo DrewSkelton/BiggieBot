@@ -19,11 +19,16 @@ module.exports = {
         message.reply(reply)
     },
 
-    async fetchEngage() {
-        let json
+    async fetchEngage(days_ahead = 0) {
+        let now = new Date()
+        
+        //Round to the nearest next day
+        let dateTo = new Date(now.getFullYear(), now.getMonth(), now.getDate()+days_ahead+1)
+
         let eventLinks = []
         try {
-            const response = await fetch('https://ou.campuslabs.com/engage/api/discovery/event/search')
+            const response = await fetch(`https://ou.campuslabs.com/engage/api/discovery/event/search?endsAfter=${now.toISOString()}&startsBefore=${dateTo.toISOString()}`)
+            console.log(response)
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
