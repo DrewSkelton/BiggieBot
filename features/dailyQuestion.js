@@ -19,6 +19,9 @@ module.exports = {
     "What is your dream car? (show photo)",
     "If you had to drink the bath water of one person in this group, who would it be?",
     "Would you move somewhere other than Oklahoma post-grad? If so, where?",
+    "If you could commit one crime and get away with it, what would it be?",
+    "What is your biggest pet peeve?",
+    "If you could play one musical instrument, what would it be?",
   ],
   
   // Current question index
