@@ -4,20 +4,28 @@ const path = require('path');
 
 module.exports = {
   name: 'dailyQuestion',
-  description: 'Posts a daily question in a specific channel',
+  description: 'Posts daily questions in a specific channel',
   
   // Questions pool
   questions: [
-    "If you could have infinite food or infinite money (you can only spend 30$ on food every day), which would you choose?",
-    "If you could get rid of any fictional character, who would it be?",
+    "Send a screenshot of your phone's screen time",
+    "When's the last time you've washed your bed's comforter/sheets?",
     "What's your spirit animal?",
-    "If you had to eat one food for the rest of your life, what would it be?",
-    "What is your least favorite food?",
     "What's your favorite song right now?",
-    "Would you rather bite ice cream or a slushy?",
     "What is the best chicken restaurant?",
-    "What is the worst type of food to get at a restaurant and why is it pizza?",
+    "How old were you when you got on social media for the first time?",
+    "Who in the group do you think would make the best dorm (same-room) roommate?",
+    "On a scale of 1-10, how much do you want to kiss Ian?",
+    "What is your dream car? (show photo)",
+    "If you had to drink the bath water of one person in this group, who would it be?",
+    "Would you move somewhere other than Oklahoma post-grad? If so, where?",
+    "If you could commit one crime and get away with it, what would it be?",
+    "What is your biggest pet peeve?",
+    "If you could play one musical instrument, what would it be?",
   ],
+  
+  // Current question index
+  currentQuestionIndex: 0,
   
   // Settings storage
   settingsFile: path.join(__dirname, '../data/dailyQuestionSettings.json'),
@@ -32,8 +40,13 @@ module.exports = {
     // Load settings from file
     this.loadSettings();
     
-    // Schedule daily question at 9 AM
+    // Schedule the first daily question at 9 AM
     cron.schedule('0 9 * * *', () => {
+      this.askDailyQuestion(client);
+    });
+
+    // Schedule the second daily question at 12 PM (noon)
+    cron.schedule('0 12 * * *', () => {
       this.askDailyQuestion(client);
     });
     
@@ -45,19 +58,23 @@ module.exports = {
       if (fs.existsSync(this.settingsFile)) {
         const settings = JSON.parse(fs.readFileSync(this.settingsFile, 'utf8'));
         this.channelId = settings.channelId || null;
+        this.currentQuestionIndex = settings.currentQuestionIndex || 0;
       } else {
         this.channelId = null;
+        this.currentQuestionIndex = 0;
       }
     } catch (error) {
       console.error('Error loading daily question settings:', error);
       this.channelId = null;
+      this.currentQuestionIndex = 0;
     }
   },
   
   saveSettings() {
     try {
       fs.writeFileSync(this.settingsFile, JSON.stringify({ 
-        channelId: this.channelId 
+        channelId: this.channelId,
+        currentQuestionIndex: this.currentQuestionIndex
       }), 'utf8');
     } catch (error) {
       console.error('Error saving daily question settings:', error);
@@ -74,14 +91,23 @@ module.exports = {
     // Skip if no channel is set
     if (!this.channelId) return;
     
-    // Get a random question
-    const question = this.questions[Math.floor(Math.random() * this.questions.length)];
-    
     // Get the channel to post in
     const channel = client.channels.cache.get(this.channelId);
     
-    if (channel) {
-      channel.send(`**Daily Question:** ${question}`);
+    if (!channel) return;
+    
+    // Check if there are questions left
+    if (this.currentQuestionIndex >= this.questions.length) {
+      channel.send("**Daily Question:** Out of questions");
+      return;
     }
+    
+    // Get the next question in order
+    const question = this.questions[this.currentQuestionIndex];
+    this.currentQuestionIndex++;
+    this.saveSettings();
+    
+    // Send the question
+    channel.send(`**Daily Question:** ${question}`);
   }
 };
