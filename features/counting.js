@@ -29,7 +29,9 @@ module.exports = {
       if (message.author.bot) return;
       
       // Get the content of the message
-      const content = message.content.trim();
+      let content = message.content.trim();
+      content = content.replace('```', '');
+      content = content.replace('^', '**');
       
       // Try to interpret the content as a number, Roman numeral, or math expression
       let number = null;
