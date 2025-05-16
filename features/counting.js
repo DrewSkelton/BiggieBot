@@ -42,11 +42,11 @@ module.exports = {
       //  number = parseInt(content);
       //}
       // Try to parse as a Roman numeral
-      if (/^[IVXLCDMivxlcdm]+$/.test(content)) {
+      if (/^[IVXLCDM]+$/.test(content)) {
         number = this.parseRomanNumeral(content);
       }
       // Try to evaluate as a math expression
-      else if (/^[\d\s+\-*\/().OoXx\[A-Fa-f\]]+$/.test(content)) {
+      else if (/^[[:xdigit:]\s+\-*\/().OoXx]+$/.test(content)) {
         try {
           number = this.evaluateMathExpression(content);
         } catch (error) {
@@ -62,11 +62,8 @@ module.exports = {
       
       // Check if the same user is trying to count twice in a row
       if (message.author.id === this.lastUserId) {
-        // Store the current count before resetting it
-        const previousCount = this.currentCount;
-        
         message.react('❌');
-        message.channel.send(`<@${message.author.id}> tried to count twice in a row! The count has been reset from ${previousCount} to 0.`);
+        message.channel.send(`<@${message.author.id}> tried to count twice in a row! The count has been reset from ${this.currentCount + 1} to 0.`);
         
         try {
             const guild = message.guild;
@@ -93,11 +90,8 @@ module.exports = {
         this.saveCount();
         message.react('✅');
       } else {
-        // Store the current count before resetting it
-        const previousCount = this.currentCount;
-        
         message.react('❌');
-        message.channel.send(`Counting failed at ${previousCount}! The next number should have been ${previousCount + 1}. Starting over from 0.`);
+        message.channel.send(`Counting failed at ${number}! The next number should have been ${this.currentCount + 1}. Starting over from 0.`);
         
         // Get the user who messed up and use their nickname if available
         try {
