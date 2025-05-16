@@ -30,8 +30,8 @@ module.exports = {
       
       // Get the content of the message
       let content = message.content.trim();
-      content = content.replace('```', '');
-      content = content.replace('^', '**');
+      content = content.replaceAll('```', '');
+      content = content.replaceAll('^', '**');
       
       // Try to interpret the content as a number, Roman numeral, or math expression
       let number = null;
@@ -46,7 +46,7 @@ module.exports = {
         number = this.parseRomanNumeral(content);
       }
       // Try to evaluate as a math expression
-      else if (/^[[:xdigit:]\s+\-*\/().OoXx]+$/.test(content)) {
+      else if (/^[\da-fA-F\s+\-*\/().OoXx]+$/.test(content)) {
         try {
           number = this.evaluateMathExpression(content);
         } catch (error) {
