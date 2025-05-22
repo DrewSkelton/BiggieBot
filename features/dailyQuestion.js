@@ -1,6 +1,5 @@
 const cron = require('node-cron');
-const fs = require('fs');
-const path = require('path');
+const database = require('../utils/database.js');
 
 module.exports = {
   name: 'dailyQuestion',
@@ -23,22 +22,17 @@ module.exports = {
     "What is your biggest pet peeve?",
     "If you could play one musical instrument, what would it be?",
   ],
-  
-  // Current question index
-  currentQuestionIndex: 0,
-  
-  // Settings storage
-  settingsFile: path.join(__dirname, '../data/dailyQuestionSettings.json'),
-  
-  init(client) {
-    // Ensure data directory exists
-    const dataDir = path.join(__dirname, '../data');
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
-    
-    // Load settings from file
-    this.loadSettings();
+
+  async init(client) {
+    // Initialize database with questions
+    // This is only for testing
+    // (Maybe users can DM the bot questions?)
+    const collection = await database.collection('daily_question');
+    await collection.updateOne( {}, {
+      $addToSet: {
+          questions: {$each: this.questions}
+        }},
+        {upsert: true});
     
     // Schedule the first daily question at 9 AM
     cron.schedule('0 9 * * *', () => {
@@ -49,65 +43,48 @@ module.exports = {
     cron.schedule('0 12 * * *', () => {
       this.askDailyQuestion(client);
     });
-    
+
     console.log('Daily question feature initialized');
   },
   
-  loadSettings() {
-    try {
-      if (fs.existsSync(this.settingsFile)) {
-        const settings = JSON.parse(fs.readFileSync(this.settingsFile, 'utf8'));
-        this.channelId = settings.channelId || null;
-        this.currentQuestionIndex = settings.currentQuestionIndex || 0;
-      } else {
-        this.channelId = null;
-        this.currentQuestionIndex = 0;
+  async askDailyQuestion(client) {
+    const collection = await database.collection('daily_question');
+    const data = await collection.findOne({});
+
+    //Pick a random question
+    const question = data.questions[Math.floor(Math.random() * data.questions.length)];
+
+    //Remove the question from the pool
+    collection.updateOne({}, {
+      $pull: {
+        questions: question
       }
-    } catch (error) {
-      console.error('Error loading daily question settings:', error);
-      this.channelId = null;
-      this.currentQuestionIndex = 0;
+    });
+
+    if (!(Symbol.iterator in Object(data.channels))) return;
+
+    for (let channelId of data.channels) {
+      // Get the channel to post in
+      const channel = await client.channels.fetch(channelId);
+      
+      if (channel == null) {
+      //  // Remove the channel from the list if it doesn't exist anymore
+      //  collection.updateOne( {}, {
+      //    $pull: {
+      //      channels: channelId
+      //    }}
+      //  );
+        continue;
+      };
+
+      if (question == null) {
+        channel.send("**Daily Question:** Out of questions");
+        return;
+      }
+
+      else {
+        channel.send(`**Daily Question:** ${question}`);
+      }
     }
-  },
-  
-  saveSettings() {
-    try {
-      fs.writeFileSync(this.settingsFile, JSON.stringify({ 
-        channelId: this.channelId,
-        currentQuestionIndex: this.currentQuestionIndex
-      }), 'utf8');
-    } catch (error) {
-      console.error('Error saving daily question settings:', error);
-    }
-  },
-  
-  setChannel(channelId) {
-    this.channelId = channelId;
-    this.saveSettings();
-    return true;
-  },
-  
-  askDailyQuestion(client) {
-    // Skip if no channel is set
-    if (!this.channelId) return;
-    
-    // Get the channel to post in
-    const channel = client.channels.cache.get(this.channelId);
-    
-    if (!channel) return;
-    
-    // Check if there are questions left
-    if (this.currentQuestionIndex >= this.questions.length) {
-      channel.send("**Daily Question:** Out of questions");
-      return;
-    }
-    
-    // Get the next question in order
-    const question = this.questions[this.currentQuestionIndex];
-    this.currentQuestionIndex++;
-    this.saveSettings();
-    
-    // Send the question
-    channel.send(`**Daily Question:** ${question}`);
   }
 };
