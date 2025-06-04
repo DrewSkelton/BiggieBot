@@ -1,6 +1,5 @@
 const { MongoClient } = require("mongodb");
 
-
 if (process.env.MONGODB_URL == undefined) {
   console.error("The MONGODB_URL environment variable is undefined");
   process.exit(1);
