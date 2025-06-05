@@ -11,11 +11,6 @@ module.exports = {
       this.askDailyQuestion(client);
     });
 
-    // Schedule the second daily question at 12 PM (noon)
-    cron.schedule('0 12 * * *', () => {
-      this.askDailyQuestion(client);
-    });
-
     console.log('Daily question feature initialized');
   },
   
