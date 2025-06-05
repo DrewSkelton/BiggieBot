@@ -1,16 +1,16 @@
 FROM node:alpine
 
-VOLUME /usr/src/app/data
+ENV NODE_ENV production
 
 # Change the timezone to central
-RUN apk add tzdata
-RUN ln -s /usr/share/zoneinfo/US/Central /etc/localtime
+ENV TZ US/Central
+RUN apk add --no-cache tzdata
 
 # Set up the environment
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-RUN npm install
-COPY . ./
-CMD ["node", "index.js"]
+COPY . .
 
+RUN npm install
+
+CMD ["node", "index.js"]

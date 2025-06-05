@@ -1,10 +1,11 @@
 const { PermissionsBitField } = require('discord.js');
+const database = require('../utils/database.js');
 
 module.exports = {
   name: 'setdailyquestion',
   description: 'Sets the current channel for daily questions',
   feature: 'dailyQuestion',
-  execute(message, args, client) {
+  async execute(message, args, client) {
     // Check if user has administrator permissions
     if (!message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
       return message.reply('❌ You need administrator permissions to use this command.');
@@ -17,8 +18,27 @@ module.exports = {
     }
     
     // Set the current channel for daily questions
-    dailyQuestionFeature.setChannel(message.channel.id);
+    const collection = await database.collection('daily_question');
+    const result = await collection.findOne({channels: message.channel.id});
+    console.log(result);
+
+    if (result == null) {
+      await collection.updateOne( {}, {
+        $addToSet: {
+          channels: message.channel.id
+        }}
+      );
+      return message.reply('✅ This channel has been set for daily questions! Questions will be posted here at 9 AM every day.');
+    }
+
+    else {
+      await collection.updateOne( {}, {
+        $pull: {
+          channels: message.channel.id
+        }}
+      );
     
-    return message.reply('✅ This channel has been set for daily questions! Questions will be posted here at 9 AM every day.');
+      return message.reply('❌ This channel has been removed for daily questions.');
+    }
   },
 };
