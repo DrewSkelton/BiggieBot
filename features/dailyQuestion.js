@@ -44,12 +44,7 @@ module.exports = {
         continue;
       };
 
-      if (question == null) {
-        channel.send("**Daily Question:** Out of questions");
-        return;
-      }
-
-      else {
+      if (question != undefined) {
         channel.send(`**Daily Question:** ${question}`);
       }
     }
