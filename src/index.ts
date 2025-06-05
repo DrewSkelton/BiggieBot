@@ -3,7 +3,7 @@ import path from 'node:path';
 import { Client, Collection, Events, GatewayIntentBits, MessageFlags, REST, RESTPostAPIApplicationCommandsJSONBody, Routes } from 'discord.js';
 import 'dotenv/config'
 
-//Helper function to recurse through an entire directory for commands or events
+// Helper function to recurse through an entire directory for commands or events
 function* recurseDirectory(searchPath: string): Generator<string> {
 	searchPath = path.resolve(searchPath);
 	// Dirent is short for directory entity chat
@@ -30,13 +30,18 @@ const client = Object.assign(
 	}
 ) 
 
-//Used for command registration
+// Stores information used for command registration
 const commands: RESTPostAPIApplicationCommandsJSONBody[] = []
 
+// Create commands
 for (const file of recurseDirectory('src/commands')) {
-	const command = await import(file);
-	commands.push(command.command.toJSON());
-	client.commands.set(command.command.name, command);
+	try {
+		const command = await import(file);
+		commands.push(command.command.toJSON());
+		client.commands.set(command.command.name, command);	
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 // Register commands 
@@ -53,11 +58,11 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN as string);
 
 		console.log(`Successfully reloaded ${commands.length} application (/) commands.`);
 	} catch (error) {
-		// And of course, make sure you catch and log any errors!
 		console.error(error);
 	}
 })();
 
+// Create command handler
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
 	const command: any = client.commands.get(interaction.commandName);
@@ -79,13 +84,19 @@ client.on(Events.InteractionCreate, async interaction => {
 	}
 });
 
+// Create events 
+// TODO: Support key value mappings to events to handle multiple in the same file
 for (const file of recurseDirectory('src/events')) {
-	const event = await import(file);
-	if (event.once) {
-		client.once(event.once, (...args) => event.execute(...args));
-	}
-	else {
-		client.on(event.on, (...args) => event.execute(...args));
+	try {
+		const event = await import(file);
+		if (event.once) {
+			client.once(event.once, (...args) => event.execute(...args));
+		}
+		else {
+			client.on(event.on, (...args) => event.execute(...args));
+		}	
+	} catch (error) {
+		console.error(error);
 	}
 }
 
