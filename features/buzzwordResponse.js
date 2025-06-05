@@ -16,6 +16,8 @@ module.exports = {
         _id: message.guild.id,
       });
 
+      if (result == undefined) return;
+
       for (const [buzzword, data] of Object.entries(result)) {
         if (buzzword != "_id" && message.content.toLowerCase().includes(buzzword)) {
           message.reply(data.response);
