@@ -1,17 +1,16 @@
-import { SlashCommandBuilder } from "discord.js"
-
-export const name = 'freefood'
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js"
 
 export const command = new SlashCommandBuilder()
-    .setName(name)
+    .setName('freefood')
     .setDescription('Lists all free food events on OU campus')
 
-export async function execute(interaction) {
+export async function execute(interaction: ChatInputCommandInteraction) {
     //Can either be an image URL or a text description as a fallback
     let eventLinks = await fetchEngage()
 
     if (eventLinks.length === 0) {
-        return await interaction.reply('Could not find any free food :cry:')
+        await interaction.reply('Could not find any free food :cry:');
+        return;
     }
 
     let reply = 'Found free food!\n'
@@ -20,7 +19,7 @@ export async function execute(interaction) {
         reply += link + '\n'
     }
 
-    await interaction.reply(reply)
+    await interaction.reply(reply);
 }
 
 async function fetchEngage(days_ahead = 0) {
@@ -32,7 +31,6 @@ async function fetchEngage(days_ahead = 0) {
     let eventLinks = []
     try {
         const response = await fetch(`https://ou.campuslabs.com/engage/api/discovery/event/search?endsAfter=${now.toISOString()}&startsBefore=${dateTo.toISOString()}`)
-        console.log(response)
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }

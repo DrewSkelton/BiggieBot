@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { Collection, MongoClient } from "mongodb";
 
 if (process.env.MONGODB_URL == undefined) {
   console.error("The MONGODB_URL environment variable is undefined");
@@ -7,7 +7,8 @@ if (process.env.MONGODB_URL == undefined) {
 
 const client = new MongoClient(process.env.MONGODB_URL);
 const database = client.db();
+console.log("Successfully connected to the MongoDB database")
 
-export default async function collection(name: string) {
+export default function collection(name: string): Collection<{}> {
   return database.collection(name)
 }

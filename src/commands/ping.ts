@@ -1,11 +1,9 @@
-import { SlashCommandBuilder } from "discord.js";
-
-export const name = 'ping';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 export const command = new SlashCommandBuilder()
-    .setName(name)
+    .setName('ping')
     .setDescription('Replies with Pong!');
 
-export async function execute(interaction) {
+export async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.reply('Pong!')
 }
