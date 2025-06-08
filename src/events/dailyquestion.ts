@@ -1,5 +1,5 @@
 import { Client, ClientApplication, Events } from "discord.js";
-import database from "../utils/database";
+import database from "../utils/database.js";
 import cron from 'node-cron'
 
 const data = database('daily_question');

@@ -5,7 +5,7 @@ import 'dotenv/config'
 
 // Helper function to recurse through an entire directory for commands or events
 function* recurseDirectory(searchPath: string): Generator<string> {
-	searchPath = path.resolve(searchPath);
+	searchPath = path.resolve(import.meta.dirname, searchPath);
 	// Dirent is short for directory entity chat
 	const dirents = fs.readdirSync(searchPath, {withFileTypes: true});
 	for (const dirent of dirents) {
@@ -34,7 +34,7 @@ const client = Object.assign(
 const commands: RESTPostAPIApplicationCommandsJSONBody[] = []
 
 // Create commands
-for (const file of recurseDirectory('src/commands')) {
+for (const file of recurseDirectory('commands')) {
 	try {
 		const command = await import(file);
 		commands.push(command.command.toJSON());
@@ -86,7 +86,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
 // Create events 
 // TODO: Support key value mappings to events to handle multiple in the same file
-for (const file of recurseDirectory('src/events')) {
+for (const file of recurseDirectory('events')) {
 	try {
 		const event = await import(file);
 		if (event.once) {
