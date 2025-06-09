@@ -1,6 +1,6 @@
 import { Events, Message, TextChannel } from "discord.js";
 import database from "../utils/database.js";
-import { evaluate } from "../commands/calc.js";
+import { evaluate, unequal } from "mathjs/number";
 
 const data = database('counting');
 
@@ -14,7 +14,7 @@ export async function execute(message: Message) {
 
     // Get the content of the message
     const content = message.content.trim().replaceAll('`', '');
-      
+    
     // Try to interpret the content as a number, Roman numeral, or math expression
     let number: number;
       
@@ -25,7 +25,7 @@ export async function execute(message: Message) {
 
     // Try to evaluate as a math expression
     try {
-      number = Number(evaluate(content))
+      number = evaluate(content)
     } catch { /* empty */ }
 
     // If we couldn't parse as any valid format, don't react
@@ -49,7 +49,7 @@ export async function execute(message: Message) {
     }
       
     // Check if the number is the next in sequence
-    else if (number !== document.count + 1) {
+    else if (unequal(number, document.count + 1)) {
         // Reset the count before sending the message
         data.updateOne(document, {
           $set: {
