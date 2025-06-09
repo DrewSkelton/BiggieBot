@@ -1,5 +1,5 @@
 {
-  "name": "biggerbot",
+  "name": "biggiebot",
   "version": "1.0.0",
   "description": "A simple Discord bot with multiple features",
   "main": "src/index.ts",

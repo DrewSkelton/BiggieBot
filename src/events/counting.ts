@@ -8,10 +8,8 @@ export const on = Events.MessageCreate;
 export async function execute(message: Message) {
     if (message.author.bot) return;
 
-    const document: any = await data.findOne({[message.channel.id]: {$type: 'object'}});
+    const document: any = await data.findOne({channel: message.channel.id});
     if (!document) return;
-    const count = document[message.channel.id].count;
-    const lastUser = document[message.channel.id].last_user;
 
     // Get the content of the message
     const content = message.content.trim().replaceAll('```', '');
@@ -35,7 +33,7 @@ export async function execute(message: Message) {
     }
       
     // Check if the same user is trying to count twice in a row
-    if (message.author.id === lastUser) {
+    if (message.author.id === document.last_user) {
         // Reset the count before sending the message
         data.updateOne(document, {
           $set: {
@@ -50,7 +48,7 @@ export async function execute(message: Message) {
     }
       
     // Check if the number is the next in sequence
-    else if (number !== count + 1) {
+    else if (number !== document.count + 1) {
         // Reset the count before sending the message
         data.updateOne(document, {
           $set: {
@@ -60,7 +58,7 @@ export async function execute(message: Message) {
         });
 
         await message.react('❌');
-        await message.reply(`Counting failed at **${number}**! The next number should have been **${count + 1}**. The counting has been reset.`);
+        await message.reply(`Counting failed at **${number}**! The next number should have been **${document.count + 1}**. The counting has been reset.`);
         await message.reply(`<@${message.author.id}> ruined it for everyone!`); 
     }
       

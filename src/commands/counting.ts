@@ -28,31 +28,28 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 }
 
 async function set(interaction: ChatInputCommandInteraction) {
-  const result = await data.updateOne({}, {
-    $set: {
-      [interaction.channel.id]: {
-        count: 0,
-        last_user: null
-      }
-    }},
-    {upsert: true}
-  );
+  const result = await data.updateOne({channel: interaction.channel.id}, {
+    $setOnInsert: {
+      channel: interaction.channel.id,
+      count: 0,
+      last_user: null
+    }
+  },
+  {upsert: true});
 
-  if (result.modifiedCount != 0) {
+  if (result.upsertedCount > 0) {
     await interaction.reply('✅ This channel has been set as a counting channel! Start counting from 1.');
   }
-  
+
   else {
     await interaction.reply('❌ This channel is already a counting channel.');
   }
 }
 
 async function remove(interaction: ChatInputCommandInteraction) {
-  const result = await data.updateOne({}, {
-    $unset: {[interaction.channel.id]: ''}
-  });
+  const result = await data.deleteOne({channel: interaction.channel.id})
 
-  if (result.modifiedCount != 0) {
+  if (result.deletedCount > 0) {
     await interaction.reply('✅ This channel has been removed as the counting channel!');
   }
 
