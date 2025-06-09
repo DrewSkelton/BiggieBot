@@ -5,11 +5,12 @@ export const command = new SlashCommandBuilder()
     .setDescription('Lists all free food events on OU campus')
 
 export async function execute(interaction: ChatInputCommandInteraction) {
+    await interaction.deferReply()
     //Can either be an image URL or a text description as a fallback
     let eventLinks = await fetchEngage()
 
     if (eventLinks.length === 0) {
-        await interaction.reply('Could not find any free food :cry:');
+        await interaction.followUp('Could not find any free food :cry:');
         return;
     }
 
@@ -19,7 +20,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         reply += link + '\n'
     }
 
-    await interaction.reply(reply);
+    await interaction.followUp(reply);
 }
 
 async function fetchEngage(days_ahead = 0) {
@@ -49,7 +50,7 @@ async function fetchEngage(days_ahead = 0) {
     return eventLinks    
 }
 
-function stringContainsFood(str) {
+function stringContainsFood(str: string): boolean {
     const keywords = ["food", "snack", "pizza"]
     for (const keyword of keywords) {
         if (str.includes(keyword)) return true
