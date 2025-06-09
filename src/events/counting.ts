@@ -1,6 +1,6 @@
 import { Events, Message, TextChannel } from "discord.js";
 import database from "../utils/database.js";
-import * as math from "mathjs/number";
+import { evaluate } from "../commands/calc.js";
 
 const data = database('counting');
 
@@ -25,7 +25,7 @@ export async function execute(message: Message) {
 
     // Try to evaluate as a math expression
     try {
-      number = Number(math.evaluate(content))
+      number = Number(evaluate(content))
     } catch { /* empty */ }
 
     // If we couldn't parse as any valid format, don't react
