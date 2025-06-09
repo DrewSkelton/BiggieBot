@@ -1,16 +1,20 @@
-FROM node:alpine
+FROM node:alpine AS build
+WORKDIR /usr/src/app
+COPY package*.json .
+RUN npm install
+COPY . .
+RUN npm run build
 
+# Production stage
+FROM node:alpine
 ENV NODE_ENV production
 
 # Change the timezone to central
 ENV TZ US/Central
 RUN apk add --no-cache tzdata
 
-# Set up the environment
 WORKDIR /usr/src/app
-
-COPY . .
-
-RUN npm install
-
+COPY --from=build /usr/src/app/dist .
+COPY package*.json ./
+RUN npm clean-install --only=production
 CMD ["node", "index.js"]

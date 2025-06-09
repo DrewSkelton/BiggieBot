@@ -1,15 +1,15 @@
-# Privacy Policy for BiggerBot
+# Privacy Policy for BiggieBot
 
-Last updated: [4/30/2025]
+Last updated: [6/8/2025]
 
 ## Information Collection
-BiggerBot does not collect or store any personal data from users or messages. The bot only processes commands that begin with the "!" prefix for immediate response purposes and does not retain command history.
+BiggieBot does not collect or store any personal data from users or messages. The bot only processes information sent to channels which have been manually set for immediate response purposes and does not retain command history.
 
 ## Data Storage
-BiggerBot does not maintain databases or logs of user interactions, messages, or any other user-related information.
+BiggieBot does not maintain databases or logs of user interactions, messages, or any other user-related information.
 
 ## Third-Party Services
-BiggerBot uses Discord's API to function but does not share any information with third parties.
+BiggieBot uses Discord's API to function but does not share any information with third parties.
 
 ## Changes to This Policy
 This Privacy Policy may be updated to reflect changes in how the bot operates. Users will be notified of any significant changes through the Discord server where the bot is deployed.
