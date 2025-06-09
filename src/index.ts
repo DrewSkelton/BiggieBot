@@ -46,24 +46,6 @@ for (const file of recurseDirectory('commands')) {
 	}
 }
 
-// Register commands 
-const rest = new REST().setToken(process.env.DISCORD_TOKEN as string);
-(async () => {
-	try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`);
-
-		// The put method is used to fully refresh all commands in the guild with the current set
-		await rest.put(
-			Routes.applicationCommands(process.env.DISCORD_CLIENT as string),
-			{ body: commands },
-		);
-
-		console.log(`Successfully reloaded ${commands.length} application (/) commands.`);
-	} catch (error) {
-		console.error(error);
-	}
-})();
-
 // Create command handler
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
@@ -102,4 +84,22 @@ for (const file of recurseDirectory('events')) {
 	}
 }
 
-client.login(process.env.DISCORD_TOKEN);
+await client.login(process.env.DISCORD_TOKEN);
+
+// Register commands 
+const rest = new REST().setToken(client.token);
+(async () => {
+	try {
+		console.log(`Started refreshing ${commands.length} application (/) commands.`);
+
+		// The put method is used to fully refresh all commands in the guild with the current set
+		await rest.put(
+			Routes.applicationCommands(client.user.id),
+			{ body: commands },
+		);
+
+		console.log(`Successfully reloaded ${commands.length} application (/) commands.`);
+	} catch (error) {
+		console.error(error);
+	}
+})();
