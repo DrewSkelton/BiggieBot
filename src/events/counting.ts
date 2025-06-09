@@ -1,5 +1,6 @@
-import { Events, Message } from "discord.js";
+import { Events, Message, TextChannel } from "discord.js";
 import database from "../utils/database.js";
+import * as math from "mathjs/number";
 
 const data = database('counting');
 
@@ -12,10 +13,10 @@ export async function execute(message: Message) {
     if (!document) return;
 
     // Get the content of the message
-    const content = message.content.trim().replaceAll('```', '');
+    const content = message.content.trim().replaceAll('`', '');
       
     // Try to interpret the content as a number, Roman numeral, or math expression
-    let number = NaN;
+    let number: number;
       
     // Try to parse as a Roman numeral
     if (/^[IVXLCDM]+$/.test(content)) {
@@ -23,12 +24,12 @@ export async function execute(message: Message) {
     }
 
     // Try to evaluate as a math expression
-    else if (/^[\da-fA-F\s+\-*/^().OoXx]+$/.test(content)) {
-      number = evaluateMathExpression(content);
-    }
+    try {
+      number = Number(math.evaluate(content))
+    } catch { /* empty */ }
 
     // If we couldn't parse as any valid format, don't react
-    if (isNaN(number)) {
+    if (number == undefined) {
       return;
     }
       
@@ -43,8 +44,8 @@ export async function execute(message: Message) {
         });
 
         await message.react('❌');
-        await message.reply(`You can't count twice in a row! The count has been reset.`);
-        await message.reply(`<@${message.author.id}> ruined it for everyone!`);
+        await message.reply(`Counting failed at **${document.count}**! You can't count twice in a row! The count has been reset.`);
+        await (message.channel as TextChannel).send(`<@${message.author.id}> ruined it for everyone!`);
     }
       
     // Check if the number is the next in sequence
@@ -58,8 +59,8 @@ export async function execute(message: Message) {
         });
 
         await message.react('❌');
-        await message.reply(`Counting failed at **${number}**! The next number should have been **${document.count + 1}**. The counting has been reset.`);
-        await message.reply(`<@${message.author.id}> ruined it for everyone!`); 
+        await message.reply(`Counting failed at **${document.count}**! **${number}** is the wrong number! The counting has been reset.`);
+        await (message.channel as TextChannel).send(`<@${message.author.id}> ruined it for everyone!`); 
     }
       
       // Update the current count to the new count
@@ -108,21 +109,4 @@ function parseRomanNumeral(str: string): number {
     }
     
     return result;
-}
-  
-  // Evaluate math expressions
-function evaluateMathExpression(expr: string): number {
-  try {
-    // Use Function constructor to safely evaluate the expression
-    const sanitizedExpr = expr.replace(/\s+/g, '').replaceAll('^', '**'); // Remove all spaces and replace ^ with **
-
-    // Keep a close eye on this function; it could possibly be malicious
-    const result = new Function(`return ${sanitizedExpr}`)();
-    
-    // Check if result is a valid number and an integer
-    if (!isNaN(result) && isFinite(result) && Number.isInteger(result)) {
-      return result;
-    }
-  } catch { /* empty */ }
-  return NaN;
 }
