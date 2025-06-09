@@ -39,7 +39,7 @@ async function set(interaction: ChatInputCommandInteraction) {
     {upsert: true}
   );
 
-  if (result.modifiedCount != 0) {
+  if (result.modifiedCount > 0) {
     await interaction.reply('✅ This channel has been set for daily questions! Questions will be posted here at 9 AM every day.');
   }
   else {
@@ -54,7 +54,7 @@ async function remove(interaction: ChatInputCommandInteraction) {
     }}
   );
   
-  if (result.modifiedCount != 0) {
+  if (result.modifiedCount > 0) {
     await interaction.reply('✅ This channel has been removed for daily questions!');
   }
 
