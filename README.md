@@ -1,18 +1,18 @@
-# BiggerBot
+# BiggieBot
 
-A fun Discord bot built by CS C&C with `discord.js`.  
+A fun Discord bot built by CS C&C with [discord.js](https://discord.js.org/).
 **THIS BOT IS BIG!!!!!!!! #MakeAmericaBigAgain**
 
 ## ✨ Features
 
 ### Commands
 
-- `!help` - Displays all available commands and features  
-- `!setcounting` - Sets the current channel as the counting channel (Admin only)  
-- `!setdailyquestion` - Sets the current channel for daily questions (Admin only)  
-- `!addbuzzword keyword/phrase, response` - Adds a new buzzword and response (limit: 2 per user)  
-- `!removebuzzword keyword/phrase` - Removes a buzzword you've created  
-- `!listbuzzwords` - Lists all buzzwords and their responses  
+- `/counting set` - Sets the current channel as the counting channel (Admin only)
+- `/dailyquestion set` - Sets the current channel for daily questions (Admin only)  
+- `/buzzword add keyword/phrase, response` - Adds a new buzzword and response (limit: 2 per user)  
+- `/buzzword remove keyword/phrase` - Removes a buzzword you've created  
+- `/buzzword list` - Lists all buzzwords and their responses  
+- And more!
 
 ### Automated Features
 
@@ -20,98 +20,86 @@ A fun Discord bot built by CS C&C with `discord.js`.
 - **Buzzword Responses** – Responds to specific keywords in messages  
 - **Counting Channel** – Maintains a channel where users count sequentially  
 
+## Developer Setup
+### Requirements
+- Node.js
+- MongoDB
+  - Either MongoDB, MongoDB Atlas, or a Docker/Podman container running MongoDB
+
+### Download Dependencies
+```sh
+npm install
+```
+
+### Set Environment Variables
+- Create .env file
+- Fill out the following fields:
+```
+DISCORD_TOKEN=
+DISCORD_CLIENT=
+MONGODB_URL=
+```
+
+### Run Bot for Development with Hot-Reloading
+```sh
+npm run dev
+```
+
+### Build Bot for Production
+```sh
+npm run build
+```
+
+### Run Production Ready Bot
+```sh
+npm run start
+```
+
 ## 📁 Project Structure
 
 ```
-BiggerBot/
-├── commands/                 # Command files
-│   ├── help.js              # Help command
-│   └── ... (other commands)
-├── features/                 # Feature modules
-│   ├── dailyQuestion.js     # Daily question feature
-│   └── ... (other features)
-├── data/                     # Data storage directory
-│   └── ... (JSON data files)
-├── utils/                    # Utility functions
-│   └── ... (utility scripts)
-├── index.js                  # Main bot file
-├── config.js                 # Configuration
-└── ... (other project files)
+dist/           # Transpiled TypeScript
+src/            # Application Source Code
+src/commands/   # Command Files
+src/events/     # Event Files
+src/utils/      # Utility Functions (Not directly registered by the bot)
+src/index.ts    # Main entrypoint
 ```
 
-## 🧩 Adding New Features
+## 🧩 Adding New Event Listeners
 
-Create a file `yourFeature.js` in the `features/` folder:
+Create a file `yourEvent.ts`/`yourEvent.js` in the `src/events/` folder:
 
-```js
-const fs = require('fs');
-const path = require('path');
+```ts
 
-module.exports = {
-  name: 'yourFeature',
-  description: 'Feature description',
-  featureIcon: '🔹',
-  someProperty: 'value',
-  settingsFile: path.join(__dirname, '../data/yourFeatureSettings.json'),
+// For an event that fires multiple times
+export const on = Events.*;
 
-  init(client) {
-    this.loadSettings();
+// For event that fires once; only set one or the other
+export const once = Events.*;
 
-    client.on('messageCreate', (message) => {
-      // Your feature logic
-    });
+export async function execute(args...) {
+  //Event logic
+}
+```
 
-    console.log('Your feature initialized');
-  },
+## 💬 Adding Commands
 
-  loadSettings() {
-    try {
-      if (fs.existsSync(this.settingsFile)) {
-        const settings = JSON.parse(fs.readFileSync(this.settingsFile, 'utf8'));
-        // Load settings
-      }
-    } catch (error) {
-      console.error('Error loading settings:', error);
-    }
-  },
+Create a file `yourcommand.ts`/`yourcommand.js` in the `src/commands/` folder:
 
-  saveSettings() {
-    try {
-      const dataDir = path.dirname(this.settingsFile);
-      if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
-      }
-      fs.writeFileSync(this.settingsFile, JSON.stringify({
-        // Settings object
-      }), 'utf8');
-    } catch (error) {
-      console.error('Error saving settings:', error);
-    }
-  }
+```ts
+export const command = new SlashCommandBuilder()
+    .setName('yourcommand')
+    .setDescription('Command description')
+    // Any other options
+
+export async function execute(interaction: ChatInputCommandInteraction) {
+    await/return interaction.reply('Command response');
 };
 ```
 
-## 💬 Adding Commands to Your New Feature
-
-Create a file `yourcommand.js` in the `commands/` folder:
-
-```js
-module.exports = {
-  name: 'yourcommand',
-  description: 'Command description',
-  feature: 'featureName',
-  featureIcon: '🔹',
-  usage: '<argument>',
-  examples: ['example1', 'example2'],
-
-  execute(message, args, client) {
-    return message.reply('Command response');
-  },
-};
-```
-
-> The bot will update all commands and features on reload.  
-> Currently running locally via `npm start`; will probably deploy to Ben's server even(tuah)lly.
+> The bot will update all commands and features on reload.
+> Currently running on Ben's server via Docker. New images are generated for each push.
 
 ---
 
