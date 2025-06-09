@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Interaction, MessageFlags, Options, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import database from '../utils/database.js';
 
 const data = database('counting');
@@ -24,7 +24,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
         case 'set': return set(interaction);
         case 'remove': return remove(interaction);
-        case 'list': return list(interaction);
     }
 }
 
@@ -59,8 +58,4 @@ async function remove(interaction: ChatInputCommandInteraction) {
   else {
     await interaction.reply('❌ This channel is not a counting channel.');
   }
-}
-
-async function list(interaction: ChatInputCommandInteraction) {
-
 }

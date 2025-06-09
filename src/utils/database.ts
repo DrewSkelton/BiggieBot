@@ -9,6 +9,6 @@ const client = new MongoClient(process.env.MONGODB_URL);
 const database = client.db();
 console.log("Successfully connected to the MongoDB database!")
 
-export default function collection(name: string): Collection<{}> {
+export default function collection(name: string): Collection<object> {
   return database.collection(name)
 }

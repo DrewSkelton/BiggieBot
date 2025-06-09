@@ -1,4 +1,4 @@
-import { Client, ClientApplication, Events, Message } from "discord.js";
+import { Events, Message } from "discord.js";
 import database from "../utils/database.js";
 
 const data = database('buzzword');

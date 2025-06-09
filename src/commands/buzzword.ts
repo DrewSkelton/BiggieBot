@@ -3,7 +3,7 @@ import database from '../utils/database.js';
 
 const data = database('buzzword');
 const permission = PermissionFlagsBits.ManageGuild;
-const limit: number = 5;
+const limit = 5;
 
 export const command = new SlashCommandBuilder()
     .setName('buzzword')
@@ -70,7 +70,6 @@ async function add(interaction: ChatInputCommandInteraction) {
 
 async function remove(interaction: ChatInputCommandInteraction) {
     const buzzword = interaction.options.getString('buzzword').toLowerCase();
-    const admin = interaction.memberPermissions.has(permission);
     
     const result = await data.updateOne( {guild: interaction.guild.id},
     {

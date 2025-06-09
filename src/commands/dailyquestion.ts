@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Interaction, MessageFlags, Options, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, MessageFlags, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import database from '../utils/database.js';
 
 const data = database('daily_question');
@@ -61,10 +61,6 @@ async function remove(interaction: ChatInputCommandInteraction) {
   else {
     await interaction.reply('❌ This channel is not added for daily questions.');
   }
-}
-
-async function list(interaction: ChatInputCommandInteraction) {
-
 }
 
 async function submit(interaction: ChatInputCommandInteraction) {

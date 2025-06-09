@@ -1,4 +1,4 @@
-import { Client, ClientApplication, Events, Message } from "discord.js";
+import { Events, Message } from "discord.js";
 import database from "../utils/database.js";
 
 const data = database('counting');
@@ -14,7 +14,7 @@ export async function execute(message: Message) {
     const lastUser = document[message.channel.id].last_user;
 
     // Get the content of the message
-    let content = message.content.trim().replaceAll('```', '');
+    const content = message.content.trim().replaceAll('```', '');
       
     // Try to interpret the content as a number, Roman numeral, or math expression
     let number = NaN;
@@ -25,7 +25,7 @@ export async function execute(message: Message) {
     }
 
     // Try to evaluate as a math expression
-    else if (/^[\da-fA-F\s+\-*\/^().OoXx]+$/.test(content)) {
+    else if (/^[\da-fA-F\s+\-*/^().OoXx]+$/.test(content)) {
       number = evaluateMathExpression(content);
     }
 
@@ -125,6 +125,6 @@ function evaluateMathExpression(expr: string): number {
     if (!isNaN(result) && isFinite(result) && Number.isInteger(result)) {
       return result;
     }
-  } catch {}
+  } catch { /* empty */ }
   return NaN;
 }

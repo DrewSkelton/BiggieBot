@@ -1,4 +1,4 @@
-import { Client, ClientApplication, Events } from "discord.js";
+import { Client, Events } from "discord.js";
 import database from "../utils/database.js";
 import cron from 'node-cron'
 
