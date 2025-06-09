@@ -21,14 +21,14 @@ export const command = new SlashCommandBuilder()
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-    switch (interaction.options.getSubcommand()) {
-        case 'set': return set(interaction);
-        case 'remove': return remove(interaction);
-    }
+  switch (interaction.options.getSubcommand()) {
+    case 'set': return set(interaction);
+    case 'remove': return remove(interaction);
+  }
 }
 
 async function set(interaction: ChatInputCommandInteraction) {
-  const result = await data.updateOne( {}, {
+  const result = await data.updateOne({}, {
     $set: {
       [interaction.channel.id]: {
         count: 0,
@@ -41,16 +41,17 @@ async function set(interaction: ChatInputCommandInteraction) {
   if (result.modifiedCount != 0) {
     await interaction.reply('✅ This channel has been set as a counting channel! Start counting from 1.');
   }
+  
   else {
     await interaction.reply('❌ This channel is already a counting channel.');
   }
 }
 
 async function remove(interaction: ChatInputCommandInteraction) {
-  const result = await data.updateOne( {}, {
-        $unset: {[interaction.channel.id]: ''}
-    });
-  
+  const result = await data.updateOne({}, {
+    $unset: {[interaction.channel.id]: ''}
+  });
+
   if (result.modifiedCount != 0) {
     await interaction.reply('✅ This channel has been removed as the counting channel!');
   }
