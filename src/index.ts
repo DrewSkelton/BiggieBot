@@ -37,8 +37,10 @@ const commands: RESTPostAPIApplicationCommandsJSONBody[] = []
 for (const file of recurseDirectory('commands')) {
 	try {
 		const command = await import(file);
-		commands.push(command.command.toJSON());
-		client.commands.set(command.command.name, command);	
+		if (command.command) {
+			commands.push(command.command.toJSON());
+			client.commands.set(command.command.name, command);
+		}	
 	} catch (error) {
 		console.error(error);
 	}
@@ -77,9 +79,9 @@ client.on(Events.InteractionCreate, async interaction => {
 	} catch (error) {
 		console.error(error);
 		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+			await interaction.followUp({ content: 'There was an error while executing this command', flags: MessageFlags.Ephemeral });
 		} else {
-			await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+			await interaction.reply({ content: 'There was an error while executing this command', flags: MessageFlags.Ephemeral });
 		}
 	}
 });

@@ -25,9 +25,9 @@ export const command = new SlashCommandBuilder()
 
 export async function execute(interaction: ChatInputCommandInteraction) {
     switch (interaction.options.getSubcommand()) {
-        case 'set': { set(interaction); break; }
-        case 'remove': { remove(interaction); break; }
-        case 'submit': { submit(interaction); break; }
+        case 'set': return set(interaction);
+        case 'remove': return remove(interaction);
+        case 'submit': return submit(interaction);
     }
 }
 
@@ -40,10 +40,10 @@ async function set(interaction: ChatInputCommandInteraction) {
   );
 
   if (result.modifiedCount != 0) {
-    interaction.reply('✅ This channel has been set for daily questions! Questions will be posted here at 9 AM every day.');
+    await interaction.reply('✅ This channel has been set for daily questions! Questions will be posted here at 9 AM every day.');
   }
   else {
-    interaction.reply('❌ This channel has already been added for daily questions.');
+    await interaction.reply('❌ This channel has already been added for daily questions.');
   }
 }
 
@@ -55,11 +55,11 @@ async function remove(interaction: ChatInputCommandInteraction) {
   );
   
   if (result.modifiedCount != 0) {
-    interaction.reply('✅ This channel has been removed for daily questions!');
+    await interaction.reply('✅ This channel has been removed for daily questions!');
   }
 
   else {
-    interaction.reply('❌ This channel is not added for daily questions.');
+    await interaction.reply('❌ This channel is not added for daily questions.');
   }
 }
 
@@ -77,7 +77,7 @@ async function submit(interaction: ChatInputCommandInteraction) {
     {upsert: true}
   );
 
-  interaction.reply({
+  await interaction.reply({
     content: '✅ Your daily question has been submitted!',
     flags: MessageFlags.Ephemeral
   });
