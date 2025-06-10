@@ -1,4 +1,4 @@
-import { Client, Events } from "discord.js";
+import { Client, Events, TextChannel } from "discord.js";
 import database from "../utils/database.js";
 import cron from 'node-cron'
 
@@ -14,37 +14,37 @@ export async function execute(client: Client) {
 }
 
 async function askDailyQuestion(client: Client) {
-    const document: any = await data.findOne({channels: {$type: 'array'}, questions: {$type: 'array'}});
-    if (!document) return;
+  // Remove the previous daily question and make the next one the new current one (by removing the first question in the queue)
+  const document: any = await data.findOneAndUpdate({
+    channels: {$type: 'array'}, questions: {$type: 'array'}
+  },
+  {
+    $pop: {
+      questions: -1
+    }
+  },
+  {returnDocument: "after"});
 
-    //Pick a random question
-    const question = document.questions[Math.floor(Math.random() * document.questions.length)];
-    
-    //Remove the question from the pool
-    data.updateOne( {}, {
-      $pull: {
-        questions: question
-      }
-    });
-    
-    // Check if channels is iterable
-    if (!(Symbol.iterator in Object(document.channels))) return;
+  if (!document?.channels || !document?.questions[0]) return;
+
+  //Pick the first question
+  const question = document.questions[0];
     
     for (const channelId of document.channels) {
-        // Get the channel to post in
-        const channel: any = client.channels.cache.get(channelId);
-        
-        if (!channel) {
-          // Remove the channel from the list if it doesn't exist anymore
-          data.updateOne( {}, {
-            $pull: {
-              channels: channelId
-            }}
-          );
-        }
+      // Get the channel to post in
+      const channel = client.channels.cache.get(channelId) as TextChannel;
 
-        else if (question) {
-            channel.send(`**Daily Question:** ${question}`);
-        }
+      // Remove the channel from the list if the bot can't find it anymore
+      if (!channel) {
+        data.updateOne( {}, {
+        $pull: {
+          channels: channelId
+        }});
+      }
+
+      // Temporary fix for questions formated in the old style
+      if (question.content) await channel.send(`**Daily Question:** ${question.content}`);
+      else await channel.send(`**Daily Question:** ${question}`);
+      
     }
 }
