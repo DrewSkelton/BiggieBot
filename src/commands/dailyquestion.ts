@@ -39,7 +39,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 async function set(interaction: ChatInputCommandInteraction) {
   if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageChannels)) return interaction.reply({
-    content: 'You do not have permission to manage channels.',
+    content: '❌ You do not have permission to manage channels.',
     flags: MessageFlags.Ephemeral
   });
 
@@ -60,7 +60,7 @@ async function set(interaction: ChatInputCommandInteraction) {
 
 async function remove(interaction: ChatInputCommandInteraction) {
   if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageChannels)) return interaction.reply({
-    content: 'You do not have permission to manage channels.',
+    content: '❌ You do not have permission to manage channels.',
     flags: MessageFlags.Ephemeral
   });
 
