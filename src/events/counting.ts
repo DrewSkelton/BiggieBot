@@ -59,7 +59,7 @@ export async function execute(message: Message) {
         });
 
         await message.react('❌');
-        await message.reply(`Counting failed at **${document.count}**! **${number}** is the wrong number! The counting has been reset.`);
+        await message.reply(`Counting failed at **${document.count + 1}**! **${number}** is the wrong number! The counting has been reset.`);
         await (message.channel as TextChannel).send(`<@${message.author.id}> ruined it for everyone!`); 
     }
       
