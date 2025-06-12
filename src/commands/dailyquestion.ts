@@ -93,15 +93,16 @@ async function submit(interaction: ChatInputCommandInteraction) {
   // Because the first value of the questions array is considered as the current questions,
   // whenever a new question is added to an empty array, the first element must be prepended with an empty object
   // to signify that their is still no current question for the day
-  await data.updateOne({
-    questions: []
-  },
-  {
-    $push: {
-      questions: null
-    }
-  },
-  {upsert: true});
+  // This is bugged pls fix
+  //await data.updateOne({
+  //  questions: []
+  //},
+  //{
+  //  $push: {
+  //    questions: null
+  //  }
+  //},
+  //{upsert: true});
 
   const question = interaction.options.getString('question')
   
