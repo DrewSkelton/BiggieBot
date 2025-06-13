@@ -90,33 +90,34 @@ async function submit(interaction: ChatInputCommandInteraction) {
     flags: MessageFlags.Ephemeral
   });
 
-  // Because the first value of the questions array is considered as the current questions,
-  // whenever a new question is added to an empty array, the first element must be prepended with an empty object
-  // to signify that their is still no current question for the day
-  // This is bugged pls fix
-  //await data.updateOne({
-  //  questions: []
-  //},
-  //{
-  //  $push: {
-  //    questions: null
-  //  }
-  //},
-  //{upsert: true});
-
-  const question = interaction.options.getString('question')
-  
+  // Adds an object to the questions array which contains the question (content) and the user's id
   const result = await data.updateOne( {}, {
     $addToSet: {
       questions: {
-        content: question,
+        content: interaction.options.getString('question'),
         author: interaction.user.id
       }
     }},
     {upsert: true}
   );
 
-  if (result.modifiedCount > 0) {
+  // Because the first value of the questions array is considered as the current question,
+  // whenever a new question is added to an empty array, the first element must be prepended with null
+  // to signify that their is still no current question for the day
+  // This statement pushes null to the front of an array that has a size of one
+  await data.updateOne({
+    questions: {
+      $size: 1
+    }
+  },
+  {
+    $push: {
+      questions: null,
+      $position: 0
+    }
+  });
+
+  if (result.upsertedCount > 0) {
     return interaction.reply({
       content: '✅ Your daily question has been submitted!',
       flags: MessageFlags.Ephemeral
