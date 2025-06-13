@@ -117,7 +117,7 @@ async function list(interaction: ChatInputCommandInteraction) {
 
 async function getBuzzwordCount(interaction: ChatInputCommandInteraction): Promise<number> {
     const document: any = await data.findOne({guild: interaction.guild.id});
-    if (!document || !document.buzzwords) return 0;
+    if (!document?.buzzwords) return 0;
 
     let count = 0;
 
