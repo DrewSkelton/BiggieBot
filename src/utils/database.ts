@@ -6,8 +6,12 @@ if (process.env.MONGODB_URL == undefined) {
 }
 
 const client = new MongoClient(process.env.MONGODB_URL);
+(async () => {
+	await client.connect();
+  console.log("Successfully connected to the MongoDB database!")
+})();
+
 const database = client.db();
-console.log("Successfully connected to the MongoDB database!")
 
 export default function collection(name: string): Collection<object> {
   return database.collection(name)
