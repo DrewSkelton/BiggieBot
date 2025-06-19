@@ -42,9 +42,6 @@ async function askDailyQuestion(client: Client) {
         }});
       }
 
-      // Temporary fix for questions formated in the old style
-      if (question.content) await channel.send(`**Daily Question:** ${question.content}`);
-      else await channel.send(`**Daily Question:** ${question}`);
-      
+      await channel.send(`**Daily Question:** ${question.content}`);
     }
 }
