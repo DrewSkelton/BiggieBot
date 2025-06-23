@@ -44,7 +44,7 @@ export async function execute(message: Message) {
         });
 
         await message.react('❌');
-        await message.reply(`Counting failed at **${document.count}**! You can't count twice in a row! The count has been reset.`);
+        await message.reply(`Counting failed at **${document.count + 1}**! You can't count twice in a row! The count has been reset.`);
         await (message.channel as TextChannel).send(`<@${message.author.id}> ruined it for everyone!`);
     }
       
@@ -54,7 +54,7 @@ export async function execute(message: Message) {
         data.updateOne(document, {
           $set: {
             count: 0,
-            userId: null
+            last_user: null
           }
         });
 
