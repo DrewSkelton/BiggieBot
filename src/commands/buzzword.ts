@@ -10,7 +10,7 @@ export const command = new SlashCommandBuilder()
     .setDescription('Manages buzzwords')
     .addSubcommand(add => add
         .setName('add')
-        .setDescription(`Adds a new buzzword and response (limit: ${limit} per user)`)
+        .setDescription(`Adds a new buzzword and response (limit: ${limit} per user).`)
         .addStringOption(option => option
             .setName('buzzword')
             .setDescription('The phrase to listen for.')
@@ -22,7 +22,7 @@ export const command = new SlashCommandBuilder()
     )
     .addSubcommand(remove => remove
         .setName('remove')
-        .setDescription('Removes a buzzword you\'ve created')
+        .setDescription('Removes a buzzword you\'ve created.')
         .addStringOption(option => option
             .setName('buzzword')
             .setDescription('The buzzword to remove.')

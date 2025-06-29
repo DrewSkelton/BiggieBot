@@ -21,7 +21,7 @@ export const command = new SlashCommandBuilder()
     )
     .addSubcommand(submit => submit
         .setName('submit')
-        .setDescription('Submit a daily question; Your discord account will be displayed alongside the question.')
+        .setDescription('Submits your daily question.')
         .addStringOption(option => option
           .setName('question')
 			    .setDescription('The question to submit.')

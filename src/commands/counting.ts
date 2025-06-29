@@ -8,7 +8,7 @@ export const command = new SlashCommandBuilder()
     .setDescription('Manages counting.')
     .addSubcommand(leaderboard => leaderboard
       .setName('leaderboard')
-      .setDescription('Sends what server has the highest count.')
+      .setDescription('Sends the server with the highest count.')
     )
     .addSubcommand(set => set
         .setName('set')
@@ -16,7 +16,7 @@ export const command = new SlashCommandBuilder()
     )
     .addSubcommand(remove => remove
         .setName('remove')
-        .setDescription('Removes the current channel form counting')
+        .setDescription('Removes the current channel from counting.')
         .addBooleanOption(option => option
             .setName('all')
             .setDescription('Removes every channel from counting.')

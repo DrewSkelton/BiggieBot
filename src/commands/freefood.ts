@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js"
 
 export const command = new SlashCommandBuilder()
     .setName('freefood')
-    .setDescription('Lists all free food events on OU campus')
+    .setDescription('Lists all free food events on OU campus.')
 
 export async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply()
