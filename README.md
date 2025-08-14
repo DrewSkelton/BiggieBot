@@ -36,7 +36,6 @@ npm install
 - Fill out the following fields:
 ```
 DISCORD_TOKEN=
-DISCORD_CLIENT=
 MONGODB_URL=
 ```
 
