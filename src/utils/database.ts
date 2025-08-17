@@ -5,7 +5,7 @@ if (process.env.MONGODB_URL == undefined) {
   process.exit(1);
 }
 
-const client = new MongoClient(process.env.MONGODB_URL);
+const client = new MongoClient(process.env.MONGODB_URL.trim());
 (async () => {
 	await client.connect();
   console.log("Successfully connected to the MongoDB database!")

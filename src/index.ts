@@ -84,7 +84,7 @@ for (const file of recurseDirectory('events')) {
 	}
 }
 
-await client.login(process.env.DISCORD_TOKEN);
+await client.login(process.env.DISCORD_TOKEN.trim());
 
 // Register commands 
 const rest = new REST().setToken(client.token);
