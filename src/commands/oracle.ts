@@ -26,7 +26,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
     let reply = '**God says:** '
 
-    for (let i = 0; i < words && reply.length <= 2000; i++) {
+    for (let i = 0; i < words && reply.length < 2000; i++) {
         reply += dictionary[Math.floor(Math.random() * dictionary.length)] + ' '
     }
 
