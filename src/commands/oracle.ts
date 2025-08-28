@@ -6,7 +6,7 @@ export const command = new SlashCommandBuilder()
     .addIntegerOption(option => option
         .setName('words')
         .setDescription('The number of words to generate. Leave empty for a random amount.')
-        .setMinValue(0)
+        .setMinValue(1)
     )
 
 let dictionary: string[]
@@ -18,16 +18,13 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     }
     
     let words = interaction.options.getInteger('words')
-    
-    if (words <= 0) {
-        // Discord's message limit is 2000 characters. Let's assume the average word length is 6 characters.
-        words = Math.floor(Math.random() * 2000/6)
-    }
 
     let reply = '**God says:** '
 
-    for (let i = 0; i < words && reply.length < 2000; i++) {
+    // If no words are specified, then there will be a 5% chance to end the loop
+    for (let i = 0; !words || i < words && reply.length < 2000; i++) {
         reply += dictionary[Math.floor(Math.random() * dictionary.length)] + ' '
+        if (!words && Math.random() < 0.05) break 
     }
 
     await interaction.reply(reply)
