@@ -6,7 +6,7 @@ export const command = new SlashCommandBuilder()
 
 export async function execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply()
-    //Can either be an image URL or a text description as a fallback
+    
     const eventLinks = await fetchEngage()
 
     if (eventLinks.length === 0) {
@@ -14,8 +14,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         return;
     }
 
-    let reply = 'Found free food!\n'
-
+    let reply = ''
     for (const link of eventLinks) {
         reply += link + '\n'
     }
@@ -39,7 +38,7 @@ async function fetchEngage(days_ahead = 0) {
 
         for (const event of json.value) {
             if (event.benefitNames.includes('Free Food') || stringContainsFood(event.description)) {
-                eventLinks.push('https://ou.campuslabs.com/engage/event/' + event.id)
+                eventLinks.push(`[${event.name}](https://ou.campuslabs.com/engage/event/${event.id})`)
             }
         }
 
