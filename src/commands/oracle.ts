@@ -19,7 +19,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     
     let words = interaction.options.getInteger('words')
 
-    let reply = `**He says:** `
+    let reply = '**He says:** '
 
     for (let i = 0; !words || i < words && reply.length < 2000; i++) {
         reply += dictionary[Math.floor(Math.random() * dictionary.length)] + ' '
