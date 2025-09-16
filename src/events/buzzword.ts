@@ -1,19 +1,19 @@
 import { Events, Message } from "discord.js";
-import database from "../utils/database.js";
-
-const data = database('buzzword');
+import { buzzwords } from "../schema/buzzwords.js";
+import { eq } from "drizzle-orm";
+import { db } from "../utils/database.js";
 
 export const on = Events.MessageCreate;
 
 export async function execute(message: Message) {
     if (message.author.bot) return;
 
-    const document: any = await data.findOne({guild: message.guild.id, buzzwords: {$type: 'array'}});
-    if (!document) return;
+    const rows = await db.select().from(buzzwords).where(eq(buzzwords.guild, message.guild.id))
+    if (!rows) return;
 
-    for (const buzzword of document.buzzwords) {
-        if (message.content.toLowerCase().includes(buzzword.buzzword)) {
-            return message.reply(buzzword.response);
+    for (const buzzword of rows) {
+        if (message.content.toLowerCase().includes(buzzword.trigger)) {
+            await message.reply(buzzword.response);
         }
     }
 }
