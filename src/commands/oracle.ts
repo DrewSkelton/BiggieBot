@@ -17,7 +17,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         dictionary = (await response.text()).split('\n')
     }
     
-    let words = interaction.options.getInteger('words')
+    const words = interaction.options.getInteger('words')
 
     let reply = '**He says:** '
 
