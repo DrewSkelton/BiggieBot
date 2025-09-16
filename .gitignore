@@ -1,3 +1,9 @@
+# Database
+pglite/
+*.sql
+*.sqlite
+*.sqlite[23]
+
 # Logs
 logs
 *.log

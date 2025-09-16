@@ -1,3 +1,4 @@
+import { drizzle } from "drizzle-orm/node-postgres";
 import { Collection, MongoClient } from "mongodb";
 
 if (process.env.MONGODB_URL == undefined) {
@@ -16,3 +17,5 @@ const database = client.db();
 export default function collection(name: string): Collection<object> {
   return database.collection(name)
 }
+
+export const db = drizzle(process.env.DATABASE_URL);
