@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, MessageFlags, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { db } from '../utils/database.js';
-import { countingTable } from '../schema/counting.js';
+import { countingChannels } from '../schema/counting.js';
 import { eq } from 'drizzle-orm';
 
 export const command = new SlashCommandBuilder()
@@ -38,7 +38,7 @@ async function set(interaction: ChatInputCommandInteraction) {
   });
 
 
-  const result = await db.insert(countingTable).values({ id: interaction.channel.id }).onConflictDoNothing()
+  const result = await db.insert(countingChannels).values({ channel: interaction.channel.id }).onConflictDoNothing()
   if (result.rowCount > 0)
     await interaction.reply('✅ This channel has been set as a counting channel! Start counting from 1.');
   else
@@ -51,7 +51,7 @@ async function remove(interaction: ChatInputCommandInteraction) {
     flags: MessageFlags.Ephemeral
   });
 
-  const result = await db.delete(countingTable).where(eq(countingTable.id, interaction.channel.id));
+  const result = await db.delete(countingChannels).where(eq(countingChannels.channel, interaction.channel.id));
   if (result.rowCount > 0)
     await interaction.reply('✅ This channel has been removed as the counting channel!');
   else

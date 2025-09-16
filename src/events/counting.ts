@@ -1,7 +1,7 @@
 import { Events, Message, TextChannel } from "discord.js";
 import { evaluate, unequal } from "mathjs/number";
 import { db } from "../utils/database.js";
-import { countingTable } from "../schema/counting.js";
+import { countingChannels } from "../schema/counting.js";
 import { eq } from "drizzle-orm";
 
 export const on = Events.MessageCreate;
@@ -9,15 +9,15 @@ export const on = Events.MessageCreate;
 export async function execute(message: Message) {
   if (message.author.bot) return;
 
-  const row = (await db.select().from(countingTable).where(eq(countingTable.id, message.channel.id))).at(0)
+  const row = (await db.select().from(countingChannels).where(eq(countingChannels.channel, message.channel.id))).at(0)
   if (!row) return;
 
   // Get the content of the message
   const content = message.content.trim().replaceAll('`', '');
-    
+
   // Try to interpret the content as a number, Roman numeral, or math expression
   let number: number;
-      
+
   // Try to parse as a Roman numeral
   if (/^[IVXLCDM]+$/.test(content)) {
     number = parseRomanNumeral(content);
@@ -35,31 +35,31 @@ export async function execute(message: Message) {
   // Check if the number is the next in sequence
   if (unequal(number, row.count + 1)) {
     // Reset the count before sending the message
-    await db.update(countingTable).set({count: 0, last: ""}).where(eq(countingTable.id, message.channel.id))
-    
+    await db.update(countingChannels).set({ count: 0, last: "" }).where(eq(countingChannels.channel, message.channel.id))
+
     await message.reply(`Counting failed at **${row.count + 1}**! **${number}** is the wrong number! The count has been reset.`);
-    await (message.channel as TextChannel).send(`<@${message.author.id}> ruined it for everyone!`); 
+    await (message.channel as TextChannel).send(`<@${message.author.id}> ruined it for everyone!`);
     await message.react('❌');
   }
 
   // Check if the same user is trying to count twice in a row
   else if (message.author.id === row.last) {
     // Reset the count before sending the message
-    await db.update(countingTable).set({count: 0, last: ""}).where(eq(countingTable.id, message.channel.id))
-    
+    await db.update(countingChannels).set({ count: 0, last: "" }).where(eq(countingChannels.channel, message.channel.id))
+
     await message.react('❌');
     await message.reply(`Counting failed at **${row.count + 1}**! You can't count twice in a row! The count has been reset.`);
     await (message.channel as TextChannel).send(`<@${message.author.id}> ruined it for everyone!`);
   }
-      
+
   // Update the current count to the new count
   else {
-    await db.update(countingTable).set({count: row.count + 1, last: message.author.id}).where(eq(countingTable.id, message.channel.id))
+    await db.update(countingChannels).set({ count: row.count + 1, last: message.author.id }).where(eq(countingChannels.channel, message.channel.id))
     await message.react('✅');
   }
 }
 
-  // Parse Roman numeral to integer
+// Parse Roman numeral to integer
 function parseRomanNumeral(str: string): number {
   const romanStr = str.toUpperCase();
   const romanMap = {
@@ -71,26 +71,26 @@ function parseRomanNumeral(str: string): number {
     D: 500,
     M: 1000
   };
-  
+
   let result = 0;
   let i = 0;
-  
+
   while (i < romanStr.length) {
     // Get current and next values
     const current = romanMap[romanStr[i]];
     const next = i + 1 < romanStr.length ? romanMap[romanStr[i + 1]] : 0;
-    
+
     // If current is greater than or equal to next, add current
     if (current >= next) {
       result += current;
       i++;
-    } 
+    }
     // If current is less than next, subtract current from next and add
     else {
       result += (next - current);
       i += 2;
     }
   }
-  
+
   return result;
 }
