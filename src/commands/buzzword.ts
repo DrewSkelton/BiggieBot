@@ -1,5 +1,7 @@
 import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
-import database from '../utils/database.js';
+import database, { db } from '../utils/database.js';
+import { buzzwords } from '../schema/buzzwords.js';
+import { eq } from 'drizzle-orm';
 
 const data = database('buzzword');
 const permission = PermissionFlagsBits.ManageGuild;
@@ -48,19 +50,16 @@ async function add(interaction: ChatInputCommandInteraction) {
 
     const buzzword = interaction.options.getString('buzzword').toLowerCase();
     const response = interaction.options.getString('response');
-    
-    const result = await data.updateOne( { guild: interaction.guild.id }, {
-        $addToSet: {
-            buzzwords: {
-                buzzword: buzzword,
-                response: response,
-                owner: interaction.user.id
-            }
-        }},
-        {upsert: true}
-    );
 
-    if (result.modifiedCount != 0) {
+    const result = await db.insert(buzzwords).values({
+        guild: interaction.guild.id,
+        trigger: buzzword,
+        response: response,
+        owner: interaction.user.id,
+    })
+
+    // TODO: Please actually check
+    if (result.rowCount > 0) {
         await interaction.reply(`✅ Added buzzword "${buzzword}" with response: "${response}".`);
     }
     else {
@@ -70,28 +69,16 @@ async function add(interaction: ChatInputCommandInteraction) {
 
 async function remove(interaction: ChatInputCommandInteraction) {
     const buzzword = interaction.options.getString('buzzword').toLowerCase();
-    
-    const result = await data.updateOne( {guild: interaction.guild.id},
-    {
-        $pull: {buzzwords:
-            {
-                buzzword: buzzword,
-                owner: interaction.user.id
-            }
-        }
-    });
-  
-    if (result.modifiedCount != 0) {
-        await interaction.reply(`✅ Removed buzzword "${buzzword}".`);
-    }
 
-    else {
+    const result = await db.delete(buzzwords).where(eq(buzzwords.guild, interaction.guild.id));
+    if (result.rowCount > 0)
+        await interaction.reply(`✅ Removed buzzword "${buzzword}".`);
+    else
         await interaction.reply('❌ Could not find a buzzword owned by you which matches');
-    }
 }
 
 async function list(interaction: ChatInputCommandInteraction) {
-    const document: any = await data.findOne( {guild: interaction.guild.id, buzzwords: {$type: "array"}} );
+    const document: any = await data.findOne({ guild: interaction.guild.id, buzzwords: { $type: "array" } });
     if (!document) return interaction.reply("❌ No buzzwords have been created yet!");
 
     let reply = '';
@@ -106,17 +93,17 @@ async function list(interaction: ChatInputCommandInteraction) {
     // Add note about limits
     reply += '\n';
     if (interaction.memberPermissions.has(permission)) {
-      reply += (`You have created ${userBuzzwordCount} buzzwords`);
+        reply += (`You have created ${userBuzzwordCount} buzzwords`);
     }
     else {
-      reply += `You have created ${userBuzzwordCount}/${limit} buzzwords.`;
+        reply += `You have created ${userBuzzwordCount}/${limit} buzzwords.`;
     }
 
     await interaction.reply(reply);
 }
 
 async function getBuzzwordCount(interaction: ChatInputCommandInteraction): Promise<number> {
-    const document: any = await data.findOne({guild: interaction.guild.id});
+    const document: any = await data.findOne({ guild: interaction.guild.id });
     if (!document?.buzzwords) return 0;
 
     let count = 0;
