@@ -1,27 +1,27 @@
-import { ChatInputCommandInteraction, GuildChannel, MessageFlags, PermissionFlagsBits, SlashCommandBuilder, TextChannel } from 'discord.js';
+import { ChatInputCommandInteraction, MessageFlags, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { db } from '../utils/database.js';
 import { countingTable } from '../schema/counting.js';
 import { eq } from 'drizzle-orm';
 
 export const command = new SlashCommandBuilder()
-    .setName('counting')
-    .setDescription('Manages counting.')
-    .addSubcommand(leaderboard => leaderboard
-      .setName('leaderboard')
-      .setDescription('Sends the server with the highest count.')
+  .setName('counting')
+  .setDescription('Manages counting.')
+  .addSubcommand(leaderboard => leaderboard
+    .setName('leaderboard')
+    .setDescription('Sends the server with the highest count.')
+  )
+  .addSubcommand(set => set
+    .setName('set')
+    .setDescription('Sets the current channel for counting.')
+  )
+  .addSubcommand(remove => remove
+    .setName('remove')
+    .setDescription('Removes the current channel from counting.')
+    .addBooleanOption(option => option
+      .setName('all')
+      .setDescription('Removes every channel from counting.')
     )
-    .addSubcommand(set => set
-        .setName('set')
-        .setDescription('Sets the current channel for counting.')
-    )
-    .addSubcommand(remove => remove
-        .setName('remove')
-        .setDescription('Removes the current channel from counting.')
-        .addBooleanOption(option => option
-            .setName('all')
-            .setDescription('Removes every channel from counting.')
-        )
-    )
+  )
 
 export async function execute(interaction: ChatInputCommandInteraction) {
   switch (interaction.options.getSubcommand()) {
@@ -36,9 +36,9 @@ async function set(interaction: ChatInputCommandInteraction) {
     content: '❌ You do not have permission to manage channels.',
     flags: MessageFlags.Ephemeral
   });
-  
-  
-  const result = await db.insert(countingTable).values({id: interaction.channel.id}).onConflictDoNothing()
+
+
+  const result = await db.insert(countingTable).values({ id: interaction.channel.id }).onConflictDoNothing()
   if (result.rowCount > 0)
     await interaction.reply('✅ This channel has been set as a counting channel! Start counting from 1.');
   else
@@ -50,11 +50,11 @@ async function remove(interaction: ChatInputCommandInteraction) {
     content: '❌ You do not have permission to manage channels.',
     flags: MessageFlags.Ephemeral
   });
-  
+
   const result = await db.delete(countingTable).where(eq(countingTable.id, interaction.channel.id));
   if (result.rowCount > 0)
     await interaction.reply('✅ This channel has been removed as the counting channel!');
-  else 
+  else
     await interaction.reply('❌ This channel is not a counting channel.');
 }
 

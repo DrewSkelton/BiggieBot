@@ -9,7 +9,7 @@ export const on = Events.MessageCreate;
 export async function execute(message: Message) {
   if (message.author.bot) return;
 
-  let row = (await db.select().from(countingTable).where(eq(countingTable.id, message.channel.id))).at(0)
+  const row = (await db.select().from(countingTable).where(eq(countingTable.id, message.channel.id))).at(0)
   if (!row) return;
 
   // Get the content of the message
