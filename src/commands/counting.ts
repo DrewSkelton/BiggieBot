@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, GuildChannel, MessageFlags, PermissionFlagsBits, SlashCommandBuilder, TextChannel } from 'discord.js';
-import database from '../utils/database.js';
-
-const data = database('counting');
+import { db } from '../utils/database.js';
+import { countingTable } from '../schema/counting.js';
+import { eq } from 'drizzle-orm';
 
 export const command = new SlashCommandBuilder()
     .setName('counting')
@@ -37,22 +37,12 @@ async function set(interaction: ChatInputCommandInteraction) {
     flags: MessageFlags.Ephemeral
   });
   
-  const result = await data.updateOne({channel: interaction.channel.id}, {
-    $setOnInsert: {
-      channel: interaction.channel.id,
-      count: 0,
-      last_user: null
-    }
-  },
-  {upsert: true});
-
-  if (result.upsertedCount > 0) {
+  
+  const result = await db.insert(countingTable).values({id: interaction.channel.id}).onConflictDoNothing()
+  if (result.rowCount > 0)
     await interaction.reply('✅ This channel has been set as a counting channel! Start counting from 1.');
-  }
-
-  else {
+  else
     await interaction.reply('❌ This channel is already a counting channel.');
-  }
 }
 
 async function remove(interaction: ChatInputCommandInteraction) {
@@ -61,18 +51,15 @@ async function remove(interaction: ChatInputCommandInteraction) {
     flags: MessageFlags.Ephemeral
   });
   
-  const result = await data.deleteOne({channel: interaction.channel.id})
-
-  if (result.deletedCount > 0) {
+  const result = await db.delete(countingTable).where(eq(countingTable.id, interaction.channel.id));
+  if (result.rowCount > 0)
     await interaction.reply('✅ This channel has been removed as the counting channel!');
-  }
-
-  else {
+  else 
     await interaction.reply('❌ This channel is not a counting channel.');
-  }
 }
 
 async function leaderboard(interaction: ChatInputCommandInteraction) {
+  /*const result = await db.insert(countingTable).values({id: interaction.channel.id}).onConflictDoNothing()
   const document: any = await data.findOne({}, { sort: { count: -1 } });
 
   if (!document) return interaction.reply(`❌ No counting channels exist.`);
@@ -81,5 +68,5 @@ async function leaderboard(interaction: ChatInputCommandInteraction) {
     ?.guild;
 
   if (guild)
-  return interaction.reply(`🏆 **${guild}** currently has the highest count at **${document.count}**!`);
+  return interaction.reply(`🏆 **${guild}** currently has the highest count at **${document.count}**!`); */
 }

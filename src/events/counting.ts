@@ -1,16 +1,16 @@
 import { Events, Message, TextChannel } from "discord.js";
-import database from "../utils/database.js";
 import { evaluate, unequal } from "mathjs/number";
-
-const data = database('counting');
+import { db } from "../utils/database.js";
+import { countingTable } from "../schema/counting.js";
+import { eq } from "drizzle-orm";
 
 export const on = Events.MessageCreate;
 
 export async function execute(message: Message) {
   if (message.author.bot) return;
 
-  const document: any = await data.findOne({channel: message.channel.id});
-  if (!document) return;
+  let row = (await db.select().from(countingTable).where(eq(countingTable.id, message.channel.id))).at(0)
+  if (!row) return;
 
   // Get the content of the message
   const content = message.content.trim().replaceAll('`', '');
@@ -33,43 +33,28 @@ export async function execute(message: Message) {
   }
 
   // Check if the number is the next in sequence
-  if (unequal(number, document.count + 1)) {
+  if (unequal(number, row.count + 1)) {
     // Reset the count before sending the message
-    data.updateOne(document, {
-      $set: {
-        count: 0,
-        last_user: null
-      }
-    });
+    await db.update(countingTable).set({count: 0, last: ""}).where(eq(countingTable.id, message.channel.id))
     
-    await message.reply(`Counting failed at **${document.count + 1}**! **${number}** is the wrong number! The count has been reset.`);
+    await message.reply(`Counting failed at **${row.count + 1}**! **${number}** is the wrong number! The count has been reset.`);
     await (message.channel as TextChannel).send(`<@${message.author.id}> ruined it for everyone!`); 
     await message.react('❌');
   }
 
   // Check if the same user is trying to count twice in a row
-  else if (message.author.id === document.last_user) {
+  else if (message.author.id === row.last) {
     // Reset the count before sending the message
-    data.updateOne(document, {
-      $set: {
-        count: 0,
-        last_user: null
-      }
-    });
+    await db.update(countingTable).set({count: 0, last: ""}).where(eq(countingTable.id, message.channel.id))
     
     await message.react('❌');
-    await message.reply(`Counting failed at **${document.count + 1}**! You can't count twice in a row! The count has been reset.`);
+    await message.reply(`Counting failed at **${row.count + 1}**! You can't count twice in a row! The count has been reset.`);
     await (message.channel as TextChannel).send(`<@${message.author.id}> ruined it for everyone!`);
   }
       
   // Update the current count to the new count
   else {
-    data.updateOne(document, {
-      $set: {
-        count: number,
-        last_user: message.author.id
-      }
-    });
+    await db.update(countingTable).set({count: row.count + 1, last: message.author.id}).where(eq(countingTable.id, message.channel.id))
     await message.react('✅');
   }
 }
