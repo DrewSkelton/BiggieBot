@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "start": "node dist/index.js",
-    "dev": "npx drizzle-kit push && tsx watch src/index.ts"
+    "dev": "npx drizzle-kit push --config drizzle.config.ts && tsx watch src/index.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.8",
@@ -15,7 +15,6 @@
     "dotenv": "^16.6.1",
     "drizzle-orm": "^0.44.5",
     "mathjs": "^14.7.0",
-    "mongodb": "^6.19.0",
     "node-cron": "^3.0.3",
     "pg": "^8.16.3"
   },

@@ -1,6 +1,6 @@
 import { Client, Events, TextChannel } from "discord.js"
 import cron from "node-cron"
-import { db } from "../utils/database.js"
+import { db } from "../database.js"
 import {
   dailyQuestionChannels,
   dailyQuestions,

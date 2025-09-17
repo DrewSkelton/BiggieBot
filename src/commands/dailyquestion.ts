@@ -4,7 +4,7 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js"
-import { db } from "../utils/database.js"
+import { db } from "../database.js"
 import {
   dailyQuestionChannels,
   dailyQuestions,
@@ -68,7 +68,7 @@ async function set(interaction: ChatInputCommandInteraction) {
     .values({ channel: interaction.channel.id })
     .onConflictDoNothing()
 
-  if (result.rowCount > 0) {
+  if (result.rows) {
     await interaction.reply(
       "✅ This channel has been set for daily questions! Questions will be posted here at 9 AM every day."
     )
@@ -90,7 +90,7 @@ async function remove(interaction: ChatInputCommandInteraction) {
     .delete(dailyQuestionChannels)
     .where(eq(dailyQuestionChannels.channel, interaction.channel.id))
 
-  if (result.rowCount > 0) {
+  if (result.rows) {
     await interaction.reply(
       "✅ This channel has been removed for daily questions!"
     )
@@ -121,7 +121,7 @@ async function submit(interaction: ChatInputCommandInteraction) {
     })
     .onConflictDoNothing()
 
-  if (result.rowCount > 0) {
+  if (result.rows) {
     await interaction.reply({
       content: "✅ Your daily question has been submitted!",
       flags: MessageFlags.Ephemeral,
