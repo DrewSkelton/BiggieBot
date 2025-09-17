@@ -101,11 +101,11 @@ async function remove(interaction: ChatInputCommandInteraction) {
 
 async function submit(interaction: ChatInputCommandInteraction) {
   // See if the user has submitted the limit
-  const rows = await db
+  const select_rows = await db
     .select()
     .from(dailyQuestions)
     .where(eq(dailyQuestions.author, interaction.user.id))
-  if (rows.length >= limit) {
+  if (select_rows.length >= limit) {
     await interaction.reply({
       content: `❌ You can only submit up to ${limit} questions.`,
       flags: MessageFlags.Ephemeral,
@@ -113,15 +113,16 @@ async function submit(interaction: ChatInputCommandInteraction) {
     return
   }
 
-  const result = await db
+  const insert_rows = await db
     .insert(dailyQuestions)
     .values({
       question: interaction.options.getString("question"),
       author: interaction.user.id,
     })
     .onConflictDoNothing()
+    .returning()
 
-  if (result.rows) {
+  if (insert_rows.length) {
     await interaction.reply({
       content: "✅ Your daily question has been submitted!",
       flags: MessageFlags.Ephemeral,

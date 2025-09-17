@@ -48,11 +48,12 @@ async function set(interaction: ChatInputCommandInteraction) {
       flags: MessageFlags.Ephemeral,
     })
 
-  const result = await db
+  const rows = await db
     .insert(countingChannels)
     .values({ channel: interaction.channel.id })
     .onConflictDoNothing()
-  if (result.rows)
+    .returning()
+  if (rows.length)
     await interaction.reply(
       "✅ This channel has been set as a counting channel! Start counting from 1."
     )
@@ -66,10 +67,11 @@ async function remove(interaction: ChatInputCommandInteraction) {
       flags: MessageFlags.Ephemeral,
     })
 
-  const result = await db
+  const rows = await db
     .delete(countingChannels)
     .where(eq(countingChannels.channel, interaction.channel.id))
-  if (result.rows)
+    .returning()
+  if (rows.length)
     await interaction.reply(
       "✅ This channel has been removed as the counting channel!"
     )

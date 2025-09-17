@@ -86,7 +86,7 @@ async function add(interaction: ChatInputCommandInteraction) {
 async function remove(interaction: ChatInputCommandInteraction) {
   const buzzword = interaction.options.getString("buzzword").toLowerCase()
 
-  const result = await db
+  const rows = await db
     .delete(buzzwords)
     .where(
       and(
@@ -94,7 +94,9 @@ async function remove(interaction: ChatInputCommandInteraction) {
         eq(buzzwords.trigger, buzzword)
       )
     )
-  if (result.rows) await interaction.reply(`✅ Removed buzzword "${buzzword}".`)
+    .returning()
+
+  if (rows.length) await interaction.reply(`✅ Removed buzzword "${buzzword}".`)
   else
     await interaction.reply(
       "❌ Could not find a buzzword owned by you which matches"
@@ -127,9 +129,7 @@ async function list(interaction: ChatInputCommandInteraction) {
   await interaction.reply(reply)
 }
 
-async function getBuzzwordCount(
-  interaction: ChatInputCommandInteraction
-): Promise<number> {
+async function getBuzzwordCount(interaction: ChatInputCommandInteraction): Promise<number> {
   const result = await db
     .select({})
     .from(buzzwords)
