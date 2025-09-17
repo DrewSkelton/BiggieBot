@@ -6,13 +6,15 @@
   "type": "module",
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "start": "node dist/index.js",
-    "dev": "npx drizzle-kit push --config drizzle.config.ts && tsx watch src/index.ts"
+    "start": "npm run migrate && node dist/index.js",
+    "dev": "npm run migrate && tsx watch src/index.ts",
+    "migrate": "npx --yes drizzle-kit migrate --config drizzle.config.js && npx --yes drizzle-kit push --config drizzle.config.js"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.8",
     "discord.js": "^14.22.1",
     "dotenv": "^16.6.1",
+    "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.5",
     "mathjs": "^14.7.0",
     "node-cron": "^3.0.3",
@@ -23,7 +25,6 @@
     "@types/node": "^22.18.4",
     "@types/node-cron": "^3.0.11",
     "@types/pg": "^8.15.5",
-    "drizzle-kit": "^0.31.4",
     "eslint": "^9.35.0",
     "globals": "^16.4.0",
     "tsx": "^4.20.5",

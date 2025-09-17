@@ -14,7 +14,11 @@ ENV TZ US/Central
 RUN apk add --no-cache tzdata
 
 WORKDIR /usr/src/app
-COPY --from=build /usr/src/app/dist .
-COPY package*.json ./
+COPY --from=build /usr/src/app/dist dist/
+COPY package*.json .
+
+COPY drizzle/ drizzle/
+COPY drizzle.config.js .
+
 RUN npm clean-install --only=production
-CMD ["node", "index.js"]
+CMD ["npm", "run", "start"]
