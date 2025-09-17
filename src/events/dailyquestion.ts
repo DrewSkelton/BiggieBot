@@ -1,47 +1,47 @@
-import { Client, Events, TextChannel } from "discord.js";
-import database from "../utils/database.js";
-import cron from 'node-cron'
+import { Client, Events, TextChannel } from "discord.js"
+import cron from "node-cron"
+import { db } from "../utils/database.js"
+import {
+  dailyQuestionChannels,
+  dailyQuestions,
+} from "../schema/dailyquestions.js"
+import { eq, min } from "drizzle-orm"
 
-const data = database('daily_question');
-
-export const once = Events.ClientReady;
+export const once = Events.ClientReady
 
 export async function execute(client: Client) {
-    // Schedule a daily question at 9 AM
-    cron.schedule('0 9 * * *', () => {
-      askDailyQuestion(client);
-    });
+  // Schedule a daily question at 9 AM
+  cron.schedule("0 9 * * *", () => {
+    askDailyQuestion(client)
+  })
 }
 
 async function askDailyQuestion(client: Client) {
-  // Remove the previous daily question and make the next one the new current one (by removing the first question in the queue)
-  const document: any = await data.findOneAndUpdate({
-    channels: {$type: 'array'}, questions: {$type: 'array'}
-  },
-  {
-    $pop: {
-      questions: -1
-    }
-  },
-  {returnDocument: "after"});
+  // The current daily question is the one at i 0
+  await db.delete(dailyQuestions).where(eq(dailyQuestions.i, 0))
 
-  if (!document?.channels || !document?.questions[0]) return;
+  // Set the daily question with the hightest i value (most recent) to zero, making it the current daily question
+  const rows = await db
+    .update(dailyQuestions)
+    .set({ i: 0 })
+    .where(
+      eq(
+        dailyQuestions.i,
+        db.select({ min: min(dailyQuestions.i) }).from(dailyQuestions)
+      )
+    )
+    .returning()
 
-  //Pick the first question
-  const question = document.questions[0];
-    
-    for (const channelId of document.channels) {
-      // Get the channel to post in
-      const channel = client.channels.cache.get(channelId) as TextChannel;
+  const question = rows.at(0)
 
-      // Remove the channel from the list if the bot can't find it anymore
-      if (!channel) {
-        data.updateOne( {}, {
-        $pull: {
-          channels: channelId
-        }});
-      }
+  if (!question) return
 
-      await channel.send(`**Daily Question:** ${question.content}`);
-    }
+  const channels = await db.select().from(dailyQuestionChannels)
+
+  for (const channelRow of channels) {
+    // Get the channel to post in
+    const channel = client.channels.cache.get(channelRow.channel) as TextChannel
+
+    if (channel) await channel.send(`**Daily Question:** ${question.question}`)
+  }
 }
