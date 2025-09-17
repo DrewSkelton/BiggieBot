@@ -113,6 +113,7 @@ import { db } from "../database.js"
 
 await db.select().from(users);
 ```
+** ENSURE MIGRATIONS ARE GENERATED BEFORE PUSHING WITH ```npx drizzle-kit generate```!!!!**
 
 For more database information, visit [Drizzle](https://orm.drizzle.team/docs/).
 
