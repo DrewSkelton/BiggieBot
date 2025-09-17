@@ -11,10 +11,10 @@ import { eq } from "drizzle-orm"
 export const command = new SlashCommandBuilder()
   .setName("counting")
   .setDescription("Manages counting.")
-  .addSubcommand((leaderboard) =>
-    leaderboard
-      .setName("leaderboard")
-      .setDescription("Sends the server with the highest count.")
+  .addSubcommand((highscore) =>
+    highscore
+      .setName("highscore")
+      .setDescription("Returns the highest count achieved in this channel")
   )
   .addSubcommand((set) =>
     set.setName("set").setDescription("Sets the current channel for counting.")
@@ -33,7 +33,7 @@ export const command = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
   switch (interaction.options.getSubcommand()) {
     case "leaderboard":
-      return leaderboard(interaction)
+      return highscore(interaction)
     case "set":
       return set(interaction)
     case "remove":
@@ -78,15 +78,14 @@ async function remove(interaction: ChatInputCommandInteraction) {
   else await interaction.reply("❌ This channel is not a counting channel.")
 }
 
-async function leaderboard(interaction: ChatInputCommandInteraction) {
-  /*const result = await db.insert(countingTable).values({id: interaction.channel.id}).onConflictDoNothing()
-  const document: any = await data.findOne({}, { sort: { count: -1 } });
-
-  if (!document) return interaction.reply(`❌ No counting channels exist.`);
-
-  const guild = (await interaction.client.channels.fetch(document.channel) as GuildChannel)
-    ?.guild;
-
-  if (guild)
-  return interaction.reply(`🏆 **${guild}** currently has the highest count at **${document.count}**!`); */
+async function highscore(interaction: ChatInputCommandInteraction) {
+  const rows = await db
+    .select()
+    .from(countingChannels)
+    .where(eq(countingChannels.channel, interaction.channel.id))
+  if (rows.at(0))
+    await interaction.reply(
+      `🏆 The highest count for this channel is **${rows.at(0).highest}**!`
+    )
+  else await interaction.reply("❌ This channel is not a counting channel.")
 }

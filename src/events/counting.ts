@@ -2,7 +2,7 @@ import { Events, Message, TextChannel } from "discord.js"
 import { evaluate, unequal } from "mathjs/number"
 import { db } from "../database.js"
 import { countingChannels } from "../schema/counting.js"
-import { eq } from "drizzle-orm"
+import { and, eq, lt } from "drizzle-orm"
 
 export const on = Events.MessageCreate
 
@@ -79,6 +79,13 @@ export async function execute(message: Message) {
       .update(countingChannels)
       .set({ count: row.count + 1, last: message.author.id })
       .where(eq(countingChannels.channel, message.channel.id))
+    // Probably a way to set the highest count a little easier (maybe a subquery)
+    await db
+      .update(countingChannels)
+      .set({ highest: row.count + 1 })
+      .where(and(
+        eq(countingChannels.channel, message.channel.id),
+        lt(countingChannels.highest, row.count + 1)))
     await message.react("✅")
   }
 }
