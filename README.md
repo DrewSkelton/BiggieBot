@@ -23,8 +23,6 @@ A fun Discord bot built by CS C&C with [discord.js](https://discord.js.org/).
 ## Developer Setup
 ### Requirements
 - Node.js
-- MongoDB
-  - Either MongoDB, MongoDB Atlas, or a Docker/Podman container running MongoDB
 
 ### Download Dependencies
 ```sh
@@ -36,7 +34,6 @@ npm install
 - Fill out the following fields:
 ```
 DISCORD_TOKEN=
-MONGODB_URL=
 ```
 
 ### Run Bot for Development with Hot-Reloading
@@ -62,6 +59,7 @@ src/            # Application Source Code
 src/commands/   # Command Files
 src/events/     # Event Files
 src/utils/      # Utility Functions (Not directly registered by the bot)
+src/database.ts # Database entrypoint
 src/index.ts    # Main entrypoint
 ```
 
@@ -93,9 +91,30 @@ export const command = new SlashCommandBuilder()
     // Any other options
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-    await/return interaction.reply('Command response');
+    await interaction.reply('Command response');
 };
 ```
+
+## Adding Database Tables (Schema)
+Create a file `yourSchema.ts`/`yourSchema.js` in the `src/schema/` folder:
+
+``` ts
+import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
+
+export const users = pgTable('users', {
+  id: integer(),
+  first_name: varchar()
+})
+```
+
+Interacting with the database: 
+``` ts
+import { db } from "../database.js"
+
+await db.select().from(users);
+```
+
+For more database information, visit [Drizzle](https://orm.drizzle.team/docs/).
 
 > The bot will update all commands and features on reload.
 > Currently running on Ben's server via Docker. New images are generated for each push.
