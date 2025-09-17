@@ -14,7 +14,7 @@ export const command = new SlashCommandBuilder()
   .addSubcommand((highscore) =>
     highscore
       .setName("highscore")
-      .setDescription("Returns the highest count achieved in this channel")
+      .setDescription("Returns the highest count achieved in this channel.")
   )
   .addSubcommand((set) =>
     set.setName("set").setDescription("Sets the current channel for counting.")
@@ -32,7 +32,7 @@ export const command = new SlashCommandBuilder()
 
 export async function execute(interaction: ChatInputCommandInteraction) {
   switch (interaction.options.getSubcommand()) {
-    case "leaderboard":
+    case "highscore":
       return highscore(interaction)
     case "set":
       return set(interaction)
