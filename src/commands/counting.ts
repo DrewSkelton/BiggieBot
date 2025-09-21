@@ -67,11 +67,10 @@ async function remove(interaction: ChatInputCommandInteraction) {
       flags: MessageFlags.Ephemeral,
     })
 
-  const rows = await db
+  const result = await db
     .delete(countingChannels)
     .where(eq(countingChannels.channel, interaction.channel.id))
-    .returning()
-  if (rows.length)
+  if (result.affectedRows)
     await interaction.reply(
       "✅ This channel has been removed as the counting channel!"
     )

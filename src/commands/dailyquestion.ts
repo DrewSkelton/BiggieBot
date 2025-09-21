@@ -113,16 +113,15 @@ async function submit(interaction: ChatInputCommandInteraction) {
     return
   }
 
-  const insert_rows = await db
+  const result = await db
     .insert(dailyQuestions)
     .values({
       question: interaction.options.getString("question"),
       author: interaction.user.id,
     })
     .onConflictDoNothing()
-    .returning()
 
-  if (insert_rows.length) {
+  if (result.affectedRows) {
     await interaction.reply({
       content: "✅ Your daily question has been submitted!",
       flags: MessageFlags.Ephemeral,
