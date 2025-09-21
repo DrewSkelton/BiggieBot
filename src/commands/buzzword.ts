@@ -17,20 +17,20 @@ export const command = new SlashCommandBuilder()
     add
       .setName("add")
       .setDescription(
-        `Adds a new buzzword and response (limit: ${limit} per user).`
+        `Adds a new buzzword and response (limit: ${limit} per user).`,
       )
       .addStringOption((option) =>
         option
           .setName("buzzword")
           .setDescription("The phrase to listen for.")
-          .setRequired(true)
+          .setRequired(true),
       )
       .addStringOption((option) =>
         option
           .setName("response")
           .setDescription("What to respond with.")
-          .setRequired(true)
-      )
+          .setRequired(true),
+      ),
   )
   .addSubcommand((remove) =>
     remove
@@ -40,13 +40,13 @@ export const command = new SlashCommandBuilder()
         option
           .setName("buzzword")
           .setDescription("The buzzword to remove.")
-          .setRequired(true)
-      )
+          .setRequired(true),
+      ),
   )
   .addSubcommand((list) =>
     list
       .setName("list")
-      .setDescription("Lists all buzzwords and their responses.")
+      .setDescription("Lists all buzzwords and their responses."),
   )
 
 export async function execute(interaction: ChatInputCommandInteraction) {
@@ -79,7 +79,7 @@ async function add(interaction: ChatInputCommandInteraction) {
   })
 
   await interaction.reply(
-    `✅ Added buzzword "${buzzword}" with response: "${response}".`
+    `✅ Added buzzword "${buzzword}" with response: "${response}".`,
   )
 }
 
@@ -91,14 +91,15 @@ async function remove(interaction: ChatInputCommandInteraction) {
     .where(
       and(
         eq(buzzwords.guild, interaction.guild.id),
-        eq(buzzwords.trigger, buzzword)
-      )
+        eq(buzzwords.trigger, buzzword),
+      ),
     )
 
-  if (result.affectedRows) await interaction.reply(`✅ Removed buzzword "${buzzword}".`)
+  if (result.affectedRows)
+    await interaction.reply(`✅ Removed buzzword "${buzzword}".`)
   else
     await interaction.reply(
-      "❌ Could not find a buzzword owned by you which matches"
+      "❌ Could not find a buzzword owned by you which matches",
     )
 }
 
@@ -128,15 +129,17 @@ async function list(interaction: ChatInputCommandInteraction) {
   await interaction.reply(reply)
 }
 
-async function getBuzzwordCount(interaction: ChatInputCommandInteraction): Promise<number> {
+async function getBuzzwordCount(
+  interaction: ChatInputCommandInteraction,
+): Promise<number> {
   const result = await db
     .select({})
     .from(buzzwords)
     .where(
       and(
         eq(buzzwords.guild, interaction.guild.id),
-        eq(buzzwords.owner, interaction.user.id)
-      )
+        eq(buzzwords.owner, interaction.user.id),
+      ),
     )
   return result.length
 }

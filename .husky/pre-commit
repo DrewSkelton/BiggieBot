@@ -1,2 +1,3 @@
-npm run migrate
+npx drizzle-kit --config drizzle.config.js generate
 npx prettier **.js **.ts **.json --write
+git add .

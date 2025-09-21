@@ -48,10 +48,10 @@ export async function execute(message: Message) {
       .where(eq(countingChannels.channel, message.channel.id))
 
     await message.reply(
-      `Counting failed at **${row.count + 1}**! **${number}** is the wrong number! The count has been reset.`
+      `Counting failed at **${row.count + 1}**! **${number}** is the wrong number! The count has been reset.`,
     )
     await (message.channel as TextChannel).send(
-      `<@${message.author.id}> ruined it for everyone!`
+      `<@${message.author.id}> ruined it for everyone!`,
     )
     await message.react("❌")
   }
@@ -66,10 +66,10 @@ export async function execute(message: Message) {
 
     await message.react("❌")
     await message.reply(
-      `Counting failed at **${row.count + 1}**! You can't count twice in a row! The count has been reset.`
+      `Counting failed at **${row.count + 1}**! You can't count twice in a row! The count has been reset.`,
     )
     await (message.channel as TextChannel).send(
-      `<@${message.author.id}> ruined it for everyone!`
+      `<@${message.author.id}> ruined it for everyone!`,
     )
   }
 
@@ -83,9 +83,12 @@ export async function execute(message: Message) {
     await db
       .update(countingChannels)
       .set({ highest: row.count + 1 })
-      .where(and(
-        eq(countingChannels.channel, message.channel.id),
-        lt(countingChannels.highest, row.count + 1)))
+      .where(
+        and(
+          eq(countingChannels.channel, message.channel.id),
+          lt(countingChannels.highest, row.count + 1),
+        ),
+      )
     await message.react("✅")
   }
 }

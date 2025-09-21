@@ -27,8 +27,8 @@ async function askDailyQuestion(client: Client) {
     .where(
       eq(
         dailyQuestions.i,
-        db.select({ min: min(dailyQuestions.i) }).from(dailyQuestions)
-      )
+        db.select({ min: min(dailyQuestions.i) }).from(dailyQuestions),
+      ),
     )
     .returning()
 
