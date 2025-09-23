@@ -8,8 +8,7 @@
     "build": "tsc --project tsconfig.json",
     "start": "npm run migrate && node dist/index.js",
     "dev": "npm run migrate && tsx watch src/index.ts",
-    "migrate": "npx --yes drizzle-kit migrate --config drizzle.config.js && npx --yes drizzle-kit push --config drizzle.config.js",
-    "prepare": "husky install"
+    "migrate": "npx --yes drizzle-kit migrate --config drizzle.config.js && npx --yes drizzle-kit push --config drizzle.config.js"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.8",
