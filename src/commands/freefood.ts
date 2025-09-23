@@ -48,7 +48,9 @@ async function fetchEngage(days_ahead = 0) {
         stringContainsFood(event.description)
       ) {
         eventLinks.push(
-          `[${event.name}](https://ou.campuslabs.com/engage/event/${event.id})`,
+          `# [${event.name}](https://ou.campuslabs.com/engage/event/${event.id})\n` +
+            //Discord date formatters use seconds instead of milliseconds
+            `<t:${Math.floor(Date.parse(event.startsOn) / 1000)}:t>-<t:${Math.floor(Date.parse(event.endsOn) / 1000)}:t> at **${event.location}**`,
         )
       }
     }
