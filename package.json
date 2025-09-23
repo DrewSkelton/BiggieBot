@@ -8,7 +8,8 @@
     "build": "tsc --project tsconfig.json",
     "start": "npm run migrate && node dist/index.js",
     "dev": "npm run migrate && tsx watch src/index.ts",
-    "migrate": "npx --yes drizzle-kit migrate --config drizzle.config.js && npx --yes drizzle-kit push --config drizzle.config.js"
+    "migrate": "npx --yes drizzle-kit migrate --config drizzle.config.js && npx --yes drizzle-kit push --config drizzle.config.js",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.8",
@@ -26,6 +27,7 @@
     "@types/pg": "^8.15.5",
     "globals": "^16.4.0",
     "husky": "^9.1.7",
+    "lint-staged": "^16.2.0",
     "prettier": "^3.6.2",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
@@ -33,5 +35,8 @@
   },
   "prettier": {
     "semi": false
+  },
+  "lint-staged": {
+    "*.{js,ts,json}": "prettier --write"
   }
 }

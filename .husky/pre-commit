@@ -1,3 +1,4 @@
-npx drizzle-kit --config drizzle.config.js generate && \
-npx prettier **.js **.ts **.json --write && \
-git add .
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npx lint-staged
