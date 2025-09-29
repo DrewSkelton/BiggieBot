@@ -6,6 +6,6 @@ export default defineConfig({
   dialect: "postgresql",
   driver: "pglite",
   dbCredentials: {
-    url: process.env.DATABASE_URL ?? "pglite",
+    url: "pglite",
   },
 })
