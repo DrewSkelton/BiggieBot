@@ -101,7 +101,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 })
 
-await client.login(process.env.DISCORD_TOKEN!.trim())
+await client.login()
+//await client.login(process.env.DISCORD_TOKEN?.trim())
 
 // Register commands
 const rest = new REST().setToken(client.token!)
