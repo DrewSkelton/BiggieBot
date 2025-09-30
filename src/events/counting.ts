@@ -22,7 +22,7 @@ export async function execute(message: Message) {
   const content = message.content.trim().replaceAll("`", "")
 
   // Try to interpret the content as a number, Roman numeral, or math expression
-  let number: number
+  let number: number | undefined
 
   // Try to parse as a Roman numeral
   if (/^[IVXLCDM]+$/.test(content)) {
@@ -96,7 +96,7 @@ export async function execute(message: Message) {
 // Parse Roman numeral to integer
 function parseRomanNumeral(str: string): number {
   const romanStr = str.toUpperCase()
-  const romanMap = {
+  const romanMap: Record<string, number> = {
     I: 1,
     V: 5,
     X: 10,

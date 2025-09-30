@@ -11,7 +11,7 @@ export async function execute(message: Message) {
   const rows = await db
     .select()
     .from(buzzwords)
-    .where(eq(buzzwords.guild, message.guild.id))
+    .where(eq(buzzwords.guild, message.guild!.id))
   if (!rows) return
 
   for (const buzzword of rows) {

@@ -62,17 +62,17 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 async function add(interaction: ChatInputCommandInteraction) {
   if (
-    !interaction.memberPermissions.has(permission) &&
+    !interaction.memberPermissions?.has(permission) &&
     (await getBuzzwordCount(interaction)) >= limit
   ) {
     return interaction.reply(`❌ You can only add up to ${limit} buzzwords.`)
   }
 
-  const buzzword = interaction.options.getString("buzzword").toLowerCase()
-  const response = interaction.options.getString("response")
-
+  const buzzword = interaction.options.getString("buzzword")?.toLowerCase()!
+  const response = interaction.options.getString("response")!
+  
   await db.insert(buzzwords).values({
-    guild: interaction.guild.id,
+    guild: interaction.guild!.id,
     trigger: buzzword,
     response: response,
     owner: interaction.user.id,
@@ -84,14 +84,14 @@ async function add(interaction: ChatInputCommandInteraction) {
 }
 
 async function remove(interaction: ChatInputCommandInteraction) {
-  const buzzword = interaction.options.getString("buzzword").toLowerCase()
+  const buzzword = interaction.options.getString("buzzword")?.toLowerCase()
 
   const result = await db
     .delete(buzzwords)
     .where(
       and(
-        eq(buzzwords.guild, interaction.guild.id),
-        eq(buzzwords.trigger, buzzword),
+        eq(buzzwords.guild, interaction.guild!.id),
+        eq(buzzwords.trigger, buzzword!),
       ),
     )
 
@@ -107,7 +107,7 @@ async function list(interaction: ChatInputCommandInteraction) {
   const rows = await db
     .select()
     .from(buzzwords)
-    .where(eq(buzzwords.guild, interaction.guild.id))
+    .where(eq(buzzwords.guild, interaction.guild!.id))
 
   let reply = ""
   let userBuzzwordCount = 0
@@ -120,7 +120,7 @@ async function list(interaction: ChatInputCommandInteraction) {
 
   // Add note about limits
   reply += "\n"
-  if (interaction.memberPermissions.has(permission)) {
+  if (interaction.memberPermissions!.has(permission)) {
     reply += `You have created ${userBuzzwordCount} buzzwords`
   } else {
     reply += `You have created ${userBuzzwordCount}/${limit} buzzwords.`
@@ -137,7 +137,7 @@ async function getBuzzwordCount(
     .from(buzzwords)
     .where(
       and(
-        eq(buzzwords.guild, interaction.guild.id),
+        eq(buzzwords.guild, interaction.guild!.id),
         eq(buzzwords.owner, interaction.user.id),
       ),
     )

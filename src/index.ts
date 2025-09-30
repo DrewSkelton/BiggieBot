@@ -5,7 +5,6 @@ import {
   Collection,
   Events,
   GatewayIntentBits,
-  MessageFlags,
   REST,
   RESTPostAPIApplicationCommandsJSONBody,
   Routes,
@@ -22,12 +21,15 @@ function* recurseDirectory(searchPath: string): Generator<string> {
       yield* recurseDirectory(path.join(searchPath, dirent.name))
     } else if (
       dirent.isFile() &&
+      dirent.name != "index.ts" && // TODO: Update this to use dynamic name
       (path.extname(dirent.name) == ".js" || path.extname(dirent.name) == ".ts")
     ) {
       yield path.join(searchPath, dirent.name)
     }
   }
 }
+
+const files = recurseDirectory("").toArray()
 
 //Client object
 const client = Object.assign(
@@ -46,16 +48,30 @@ const client = Object.assign(
 // Stores information used for command registration
 const commands: RESTPostAPIApplicationCommandsJSONBody[] = []
 
-// Create commands
-for (const file of recurseDirectory("commands")) {
-  try {
-    const command = await import(file)
-    if (command.command) {
-      commands.push(command.command.toJSON())
-      client.commands.set(command.command.name, command)
+// Create events
+for (const file of files) {
+  const imp = await import(file)
+
+  if (imp.execute) {
+    if (imp.command) {
+      commands.push(imp.command.toJSON())
+      client.commands.set(imp.command.name, imp)
+      console.log(`Created ${imp.command.name} command.`)
+    } else if (imp.on) {
+      client.on(imp.on, (...args) =>
+        imp
+          .execute(...args)
+          .then()
+          .catch(console.error),
+      )
+    } else if (imp.once) {
+      client.once(imp.once, (...args) =>
+        imp
+          .execute(...args)
+          .then()
+          .catch(console.error),
+      )
     }
-  } catch (error) {
-    console.error(error)
   }
 }
 
@@ -73,53 +89,29 @@ client.on(Events.InteractionCreate, async (interaction) => {
     await command.execute(interaction)
   } catch (error) {
     console.error(error)
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp({
-        content: "There was an error while executing this command",
-        flags: MessageFlags.Ephemeral,
-      })
-    } else {
-      await interaction.reply({
-        content: "There was an error while executing this command",
-        flags: MessageFlags.Ephemeral,
-      })
-    }
+    try {
+      // Intentionally send an incorrect message to get Discord's default error message sent to the client
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp("")
+      } else {
+        await interaction.reply("")
+      }
+    } catch {}
   }
 })
 
-// Create events
-// TODO: Support key value mappings to events to handle multiple in the same file
-for (const file of recurseDirectory("events")) {
-  try {
-    const event = await import(file)
-    if (event.once) {
-      client.once(event.once, (...args) => event.execute(...args))
-    } else {
-      client.on(event.on, (...args) => event.execute(...args))
-    }
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-await client.login(process.env.DISCORD_TOKEN.trim())
+await client.login(process.env.DISCORD_TOKEN?.trim())
 
 // Register commands
-const rest = new REST().setToken(client.token)
+const rest = new REST().setToken(client.token!)
 ;(async () => {
   try {
-    console.log(
-      `Started refreshing ${commands.length} application (/) commands.`,
-    )
-
     // The put method is used to fully refresh all commands with the current set
-    await rest.put(Routes.applicationCommands(client.user.id), {
+    await rest.put(Routes.applicationCommands(client.user!.id), {
       body: commands,
     })
 
-    console.log(
-      `Successfully reloaded ${commands.length} application (/) commands.`,
-    )
+    console.log(`Successfully reloaded ${commands.length} slash commands.`)
   } catch (error) {
     console.error(error)
   }

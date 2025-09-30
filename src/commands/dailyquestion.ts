@@ -57,7 +57,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 }
 
 async function set(interaction: ChatInputCommandInteraction) {
-  if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageChannels))
+  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels))
     return interaction.reply({
       content: "❌ You do not have permission to manage channels.",
       flags: MessageFlags.Ephemeral,
@@ -65,7 +65,7 @@ async function set(interaction: ChatInputCommandInteraction) {
 
   const result = await db
     .insert(dailyQuestionChannels)
-    .values({ channel: interaction.channel.id })
+    .values({ channel: interaction.channel!.id })
     .onConflictDoNothing()
 
   if (result.rows) {
@@ -80,7 +80,7 @@ async function set(interaction: ChatInputCommandInteraction) {
 }
 
 async function remove(interaction: ChatInputCommandInteraction) {
-  if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageChannels))
+  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels))
     return interaction.reply({
       content: "❌ You do not have permission to manage channels.",
       flags: MessageFlags.Ephemeral,
@@ -88,7 +88,7 @@ async function remove(interaction: ChatInputCommandInteraction) {
 
   const result = await db
     .delete(dailyQuestionChannels)
-    .where(eq(dailyQuestionChannels.channel, interaction.channel.id))
+    .where(eq(dailyQuestionChannels.channel, interaction.channel!.id))
 
   if (result.rows) {
     await interaction.reply(
@@ -116,7 +116,7 @@ async function submit(interaction: ChatInputCommandInteraction) {
   const result = await db
     .insert(dailyQuestions)
     .values({
-      question: interaction.options.getString("question"),
+      question: interaction.options.getString("question")!,
       author: interaction.user.id,
     })
     .onConflictDoNothing()
@@ -141,7 +141,7 @@ async function get(interaction: ChatInputCommandInteraction) {
     .where(eq(dailyQuestions.i, 0))
 
   if (rows.at(0)) {
-    return interaction.reply(rows.at(0).question)
+    return interaction.reply(rows.at(0)!.question)
   } else {
     return interaction.reply("❌ There is no daily question today")
   }

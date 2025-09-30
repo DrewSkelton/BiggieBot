@@ -55,7 +55,7 @@ async function fetchEngage(days_ahead = 0) {
       }
     }
   } catch (error) {
-    console.error(error.message)
+    console.error(error)
   }
 
   return eventLinks

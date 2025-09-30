@@ -42,7 +42,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 }
 
 async function set(interaction: ChatInputCommandInteraction) {
-  if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageChannels))
+  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels))
     return interaction.reply({
       content: "❌ You do not have permission to manage channels.",
       flags: MessageFlags.Ephemeral,
@@ -50,7 +50,7 @@ async function set(interaction: ChatInputCommandInteraction) {
 
   const rows = await db
     .insert(countingChannels)
-    .values({ channel: interaction.channel.id })
+    .values({ channel: interaction.channel!.id })
     .onConflictDoNothing()
     .returning()
   if (rows.length)
@@ -61,7 +61,7 @@ async function set(interaction: ChatInputCommandInteraction) {
 }
 
 async function remove(interaction: ChatInputCommandInteraction) {
-  if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageChannels))
+  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels))
     return interaction.reply({
       content: "❌ You do not have permission to manage channels.",
       flags: MessageFlags.Ephemeral,
@@ -69,7 +69,7 @@ async function remove(interaction: ChatInputCommandInteraction) {
 
   const result = await db
     .delete(countingChannels)
-    .where(eq(countingChannels.channel, interaction.channel.id))
+    .where(eq(countingChannels.channel, interaction.channel!.id))
   if (result.affectedRows)
     await interaction.reply(
       "✅ This channel has been removed as the counting channel!",
@@ -81,10 +81,10 @@ async function highscore(interaction: ChatInputCommandInteraction) {
   const rows = await db
     .select()
     .from(countingChannels)
-    .where(eq(countingChannels.channel, interaction.channel.id))
+    .where(eq(countingChannels.channel, interaction.channel!.id))
   if (rows.at(0))
     await interaction.reply(
-      `🏆 The highest count for this channel is **${rows.at(0).highest}**!`,
+      `🏆 The highest count for this channel is **${rows.at(0)!.highest}**!`,
     )
   else await interaction.reply("❌ This channel is not a counting channel.")
 }
