@@ -21,6 +21,7 @@ function* recurseDirectory(searchPath: string): Generator<string> {
       yield* recurseDirectory(path.join(searchPath, dirent.name))
     } else if (
       dirent.isFile() &&
+      dirent.name != "index.js" &&
       dirent.name != "index.ts" && // TODO: Update this to use dynamic name
       (path.extname(dirent.name) == ".js" || path.extname(dirent.name) == ".ts")
     ) {
