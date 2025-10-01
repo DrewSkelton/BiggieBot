@@ -40,7 +40,7 @@ export async function execute(message: Message) {
   }
 
   // Check if the number is the next in sequence
-  if (unequal(number, row.count + 1)) {
+  if (unequal(number, row.count! + 1)) {
     // Reset the count before sending the message
     await db
       .update(countingChannels)
@@ -48,7 +48,7 @@ export async function execute(message: Message) {
       .where(eq(countingChannels.channel, message.channel.id))
 
     await message.reply(
-      `Counting failed at **${row.count + 1}**! **${number}** is the wrong number! The count has been reset.`,
+      `Counting failed at **${row.count! + 1}**! **${number}** is the wrong number! The count has been reset.`,
     )
     await (message.channel as TextChannel).send(
       `<@${message.author.id}> ruined it for everyone!`,
@@ -66,7 +66,7 @@ export async function execute(message: Message) {
 
     await message.react("❌")
     await message.reply(
-      `Counting failed at **${row.count + 1}**! You can't count twice in a row! The count has been reset.`,
+      `Counting failed at **${row.count! + 1}**! You can't count twice in a row! The count has been reset.`,
     )
     await (message.channel as TextChannel).send(
       `<@${message.author.id}> ruined it for everyone!`,
@@ -77,16 +77,16 @@ export async function execute(message: Message) {
   else {
     await db
       .update(countingChannels)
-      .set({ count: row.count + 1, last: message.author.id })
+      .set({ count: row.count! + 1, last: message.author.id })
       .where(eq(countingChannels.channel, message.channel.id))
     // Probably a way to set the highest count a little easier (maybe a subquery)
     await db
       .update(countingChannels)
-      .set({ highest: row.count + 1 })
+      .set({ highest: row.count! + 1 })
       .where(
         and(
           eq(countingChannels.channel, message.channel.id),
-          lt(countingChannels.highest, row.count + 1),
+          lt(countingChannels.highest, row.count! + 1),
         ),
       )
     await message.react("✅")
