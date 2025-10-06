@@ -4,10 +4,16 @@ export const command = new SlashCommandBuilder()
   .setName("freefood")
   .setDescription("Lists all free food events on OU campus.")
 
+  .addIntegerOption((option: any) =>
+    option.setName("days_ahead")
+      .setDescription("The number of days ahead to look for free food.")
+      .setRequired(false),
+  )
+
 export async function execute(interaction: ChatInputCommandInteraction) {
   await interaction.deferReply()
 
-  const eventLinks = await fetchEngage()
+  const eventLinks = await fetchEngage(interaction.options.getInteger("days_ahead") || 0)
 
   if (eventLinks.length === 0) {
     await interaction.followUp("Could not find any free food :cry:")
@@ -22,7 +28,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
   await interaction.followUp(reply)
 }
 
-async function fetchEngage(days_ahead = 0) {
+async function fetchEngage(days_ahead: number) {
   const now = new Date()
 
   //Round to the nearest next day
