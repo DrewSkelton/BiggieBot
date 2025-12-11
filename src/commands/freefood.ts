@@ -5,7 +5,8 @@ export const command = new SlashCommandBuilder()
   .setDescription("Lists all free food events on OU campus.")
 
   .addIntegerOption((option: any) =>
-    option.setName("days_ahead")
+    option
+      .setName("days_ahead")
       .setDescription("The number of days ahead to look for free food.")
       .setRequired(false),
   )
@@ -13,7 +14,9 @@ export const command = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
   await interaction.deferReply()
 
-  const eventLinks = await fetchEngage(interaction.options.getInteger("days_ahead") || 0)
+  const eventLinks = await fetchEngage(
+    interaction.options.getInteger("days_ahead") || 0,
+  )
 
   if (eventLinks.length === 0) {
     await interaction.followUp("Could not find any free food :cry:")
@@ -30,21 +33,16 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
 async function fetchEngage(days_ahead: number) {
   const now = new Date()
-  
+
   const leftDate = new Date()
 
-  let rightDate = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate() + 1,
-  )
+  let rightDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
   //Round to the nearest next day
   const dateTo = new Date(
     now.getFullYear(),
     now.getMonth(),
     now.getDate() + days_ahead + 1,
   )
-
 
   console.log(dateTo)
 
@@ -62,14 +60,16 @@ async function fetchEngage(days_ahead: number) {
       }
       const json: any = await response.json()
       responses.push(json)
-      console.log( json )
+      console.log(json)
 
       rightDate.setDate(rightDate.getDate() + 1)
       leftDate.setDate(leftDate.getDate() + 1)
     }
-    
-    console.log(`https://ou.campuslabs.com/engage/api/discovery/event/search?endsAfter=${leftDate.toISOString()}&startsBefore=${dateTo.toISOString()}`)
-    
+
+    console.log(
+      `https://ou.campuslabs.com/engage/api/discovery/event/search?endsAfter=${leftDate.toISOString()}&startsBefore=${dateTo.toISOString()}`,
+    )
+
     for (const json of responses) {
       for (const event of json.value) {
         if (
@@ -79,21 +79,27 @@ async function fetchEngage(days_ahead: number) {
           const today = new Date().getDate()
           const tomorrow = new Date().getDate() + 1
           const eventDate = new Date(event.startsOn).getDate()
-          const formattedDate = eventDate === today ? "Today" : eventDate === tomorrow ? "Tomorrow" : new Date(event.startsOn).toLocaleDateString(undefined, { weekday: 'long'})
+          const formattedDate =
+            eventDate === today
+              ? "Today"
+              : eventDate === tomorrow
+                ? "Tomorrow"
+                : new Date(event.startsOn).toLocaleDateString(undefined, {
+                    weekday: "long",
+                  })
           eventLinks.push(
-            `# [${event.name}](https://ou.campuslabs.com/engage/event/${event.id})\n` +
+            `## [${event.name}](https://ou.campuslabs.com/engage/event/${event.id})\n` +
               //Discord date formatters use seconds instead of milliseconds
               `${formattedDate}, <t:${Math.floor(Date.parse(event.startsOn) / 1000)}:t>-<t:${Math.floor(Date.parse(event.endsOn) / 1000)}:t> at **${event.location}**`,
-          )}
+          )
         }
       }
     }
-    catch (error) {
-      console.error(error)
-    }
-    return eventLinks
-  } 
-
+  } catch (error) {
+    console.error(error)
+  }
+  return eventLinks
+}
 
 function stringContainsFood(str: string): boolean {
   const keywords = ["food", "snack", "pizza"]
