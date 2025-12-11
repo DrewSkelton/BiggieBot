@@ -4,7 +4,7 @@ pglite/
 *.sqlite3
 *.sql
 *.sql3
-!drizzle/**
+!migrations/**
 
 # Logs
 logs
