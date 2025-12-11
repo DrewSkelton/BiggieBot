@@ -9,7 +9,7 @@ RUN npm run build
 
 # Production stage
 FROM node:alpine
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Change the timezone to central
 ENV TZ=US/Central
