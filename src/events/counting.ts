@@ -29,7 +29,7 @@ export async function execute(message: Message) {
     number = parseRomanNumeral(content)
   } else
     try {
-      number = evaluate(content)
+      number = evaluate(content.toLowerCase())
     } catch {
       /* empty */
     }
