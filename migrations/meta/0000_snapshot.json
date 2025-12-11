@@ -1,75 +1,79 @@
 {
-  "id": "19351cbc-8190-4f4c-8f14-e909d153c598",
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "5613a610-012d-4437-aa7d-068679046687",
   "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "7",
-  "dialect": "postgresql",
   "tables": {
-    "public.buzzwords": {
+    "buzzwords": {
       "name": "buzzwords",
-      "schema": "",
       "columns": {
         "guild": {
           "name": "guild",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "trigger": {
           "name": "trigger",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "response": {
           "name": "response",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "owner": {
           "name": "owner",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
+      "checkConstraints": {}
     },
-    "public.counting_channels": {
+    "counting_channels": {
       "name": "counting_channels",
-      "schema": "",
       "columns": {
         "channel": {
           "name": "channel",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
         "count": {
           "name": "count",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
+          "autoincrement": false,
           "default": 0
         },
         "highest": {
           "name": "highest",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
+          "autoincrement": false,
           "default": 0
         },
         "last": {
           "name": "last",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
+          "autoincrement": false,
           "default": "''"
         }
       },
@@ -77,78 +81,80 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
+      "checkConstraints": {}
     },
-    "public.daily_question_channels": {
+    "daily_question_channels": {
       "name": "daily_question_channels",
-      "schema": "",
       "columns": {
         "channel": {
           "name": "channel",
           "type": "text",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
+      "checkConstraints": {}
     },
-    "public.daily_questions": {
+    "daily_questions": {
       "name": "daily_questions",
-      "schema": "",
       "columns": {
+        "i": {
+          "name": "i",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
         "question": {
           "name": "question",
           "type": "text",
-          "primaryKey": true,
-          "notNull": true
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         },
         "author": {
           "name": "author",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         },
-        "i": {
-          "name": "i",
-          "type": "serial",
+        "guild": {
+          "name": "guild",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "daily_questions_question_unique": {
+          "name": "daily_questions_question_unique",
+          "columns": [
+            "question"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "daily_questions_i_unique": {
-          "name": "daily_questions_i_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "i"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
-  "enums": {},
-  "schemas": {},
-  "sequences": {},
-  "roles": {},
-  "policies": {},
   "views": {},
+  "enums": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
   }
 }

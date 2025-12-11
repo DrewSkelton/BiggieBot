@@ -12,15 +12,18 @@ FROM node:alpine
 ENV NODE_ENV production
 
 # Change the timezone to central
-ENV TZ US/Central
+ENV TZ=US/Central
 RUN apk add --no-cache tzdata
 
 WORKDIR /usr/src/app
 COPY --from=build /usr/src/app/dist dist/
 COPY package*.json .
 
-COPY drizzle/ drizzle/
+COPY migrations/ migrations/
 COPY drizzle.config.js .
+
+RUN mkdir database
+ENV SQLITE_URL=file:database/database.sqlite3
 
 RUN npm clean-install --only=production
 CMD ["npm", "run", "start"]

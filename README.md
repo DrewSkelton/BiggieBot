@@ -3,22 +3,22 @@
 A fun Discord bot built by CS C&C with [discord.js](https://discord.js.org/).
 **THIS BOT IS BIG!!!!!!!! #MakeAmericaBigAgain**
 
-## ✨ Features
+## Features
 
 ### Commands
 
 - `/counting set` - Sets the current channel as the counting channel (Admin only)
-- `/dailyquestion set` - Sets the current channel for daily questions (Admin only)  
-- `/buzzword add keyword/phrase, response` - Adds a new buzzword and response (limit: 2 per user)  
-- `/buzzword remove keyword/phrase` - Removes a buzzword you've created  
-- `/buzzword list` - Lists all buzzwords and their responses  
+- `/dailyquestion set` - Sets the current channel for daily questions (Admin only)
+- `/buzzword add keyword/phrase, response` - Adds a new buzzword and response (limit: 2 per user)
+- `/buzzword remove keyword/phrase` - Removes a buzzword you've created
+- `/buzzword list` - Lists all buzzwords and their responses
 - And more!
 
 ### Automated Features
 
-- **Daily Questions** – Posts a random question every day  
-- **Buzzword Responses** – Responds to specific keywords in messages  
-- **Counting Channel** – Maintains a channel where users count sequentially  
+- **Daily Questions** – Posts a random question every day
+- **Buzzword Responses** – Responds to specific keywords in messages
+- **Counting Channel** – Maintains a channel where users count sequentially
 
 ## Developer Setup
 ### Requirements
@@ -51,7 +51,7 @@ npm run build
 npm run start
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 dist/           # Transpiled TypeScript
@@ -63,7 +63,7 @@ src/database.ts # Database entrypoint
 src/index.ts    # Main entrypoint
 ```
 
-## 🧩 Adding New Event Listeners
+### Adding New Event Listeners
 
 Create a file `yourEvent.ts`/`yourEvent.js` in the `src/events/` folder:
 
@@ -80,7 +80,7 @@ export async function execute(args...) {
 }
 ```
 
-## 💬 Adding Commands
+### Adding Commands
 
 Create a file `yourcommand.ts`/`yourcommand.js` in the `src/commands/` folder:
 
@@ -95,25 +95,25 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 };
 ```
 
-## Adding Database Tables (Schema)
+### Adding Database Tables (Schemas)
 Create a file `yourSchema.ts`/`yourSchema.js` in the `src/schema/` folder:
 
 ``` ts
-import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { integer, sqliteTable, varchar } from "drizzle-orm/sqlite-core";
 
-export const users = pgTable('users', {
+export const users = sqliteTable('users', {
   id: integer(),
   first_name: varchar()
 })
 ```
 
-Interacting with the database: 
+### Interacting with the database:
 ``` ts
 import { db } from "../database.js"
 
 await db.select().from(users);
 ```
-** ENSURE MIGRATIONS ARE GENERATED BEFORE PUSHING WITH ```npx drizzle-kit generate```!!!!**
+** ENSURE MIGRATIONS ARE GENERATED BEFORE PUSHING WITH ```npm run migrate```!!!!**
 
 For more database information, visit [Drizzle](https://orm.drizzle.team/docs/).
 
@@ -122,7 +122,7 @@ For more database information, visit [Drizzle](https://orm.drizzle.team/docs/).
 
 ---
 
-## 📜 Legal
+## Legal
 
-- [Privacy Policy](PRIVACY_POLICY.md)  
+- [Privacy Policy](PRIVACY_POLICY.md)
 - [Terms of Service](TERMS_OF_SERVICE.md)

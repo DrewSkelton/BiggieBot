@@ -55,7 +55,7 @@ async function set(interaction: ChatInputCommandInteraction) {
     .returning()
   if (rows.length)
     await interaction.reply(
-      "✅ This channel has been set as a counting channel! Start counting from 1.",
+      "This channel has been set as a counting channel! Start counting from 1.",
     )
   else await interaction.reply("❌ This channel is already a counting channel.")
 }
@@ -70,9 +70,9 @@ async function remove(interaction: ChatInputCommandInteraction) {
   const result = await db
     .delete(countingChannels)
     .where(eq(countingChannels.channel, interaction.channel!.id))
-  if (result.affectedRows)
+  if (result.rowsAffected)
     await interaction.reply(
-      "✅ This channel has been removed as the counting channel!",
+      "This channel has been removed as the counting channel!",
     )
   else await interaction.reply("❌ This channel is not a counting channel.")
 }
@@ -84,7 +84,7 @@ async function highscore(interaction: ChatInputCommandInteraction) {
     .where(eq(countingChannels.channel, interaction.channel!.id))
   if (rows.at(0))
     await interaction.reply(
-      `🏆 The highest count for this channel is **${rows.at(0)!.highest}**!`,
+      `The highest count for this channel is **${rows.at(0)!.highest}**!`,
     )
   else await interaction.reply("❌ This channel is not a counting channel.")
 }

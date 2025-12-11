@@ -1,5 +1,10 @@
 # Database
 pglite/
+*.sqlite
+*.sqlite3
+*.sql
+*.sql3
+!drizzle/**
 
 # Logs
 logs

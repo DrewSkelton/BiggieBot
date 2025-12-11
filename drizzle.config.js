@@ -2,10 +2,10 @@ import "dotenv/config"
 import { defineConfig } from "drizzle-kit"
 
 export default defineConfig({
-  schema: ["src/schema", "dist/schema"],
-  dialect: "postgresql",
-  driver: "pglite",
+  out: "migrations",
+  schema: "src/schema",
+  dialect: "sqlite",
   dbCredentials: {
-    url: "pglite",
+    url: process.env.SQLITE_URL || "file:database.sqlite3",
   },
 })

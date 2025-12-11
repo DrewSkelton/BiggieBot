@@ -1,8 +1,8 @@
-import { drizzle } from "drizzle-orm/pglite"
-import { migrate } from "drizzle-orm/pglite/migrator"
+import { drizzle } from "drizzle-orm/libsql"
+import { migrate } from "drizzle-orm/libsql/migrator"
 
-export const db = drizzle("pglite", {
+export const db = drizzle(process.env.SQLITE_URL || "file:database.sqlite3", {
   casing: "snake_case",
 })
 
-await migrate(db, { migrationsFolder: "drizzle" })
+migrate(db, { migrationsFolder: "migrations" })

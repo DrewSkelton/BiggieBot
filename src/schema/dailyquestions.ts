@@ -1,11 +1,13 @@
-import { pgTable, serial, text } from "drizzle-orm/pg-core"
+import { Snowflake } from "discord.js"
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 
-export const dailyQuestions = pgTable("daily_questions", {
-  question: text().primaryKey(),
-  author: text().notNull(),
-  i: serial().unique(), // An auto-incrementing integer used to keep track of the order
+export const dailyQuestions = sqliteTable("daily_questions", {
+  i: integer().primaryKey({ autoIncrement: true }), // An auto-incrementing integer used to keep track of the order
+  question: text().notNull().unique(),
+  author: text().$type<Snowflake>().notNull(),
+  guild: text().$type<Snowflake>().notNull(),
 })
 
-export const dailyQuestionChannels = pgTable("daily_question_channels", {
-  channel: text().primaryKey(),
+export const dailyQuestionChannels = sqliteTable("daily_question_channels", {
+  channel: text().$type<Snowflake>().primaryKey(),
 })

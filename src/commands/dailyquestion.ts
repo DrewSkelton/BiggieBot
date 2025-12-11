@@ -70,7 +70,7 @@ async function set(interaction: ChatInputCommandInteraction) {
 
   if (result.rows) {
     await interaction.reply(
-      "✅ This channel has been set for daily questions! Questions will be posted here at 9 AM every day.",
+      "This channel has been set for daily questions! Questions will be posted here at 9 AM every day.",
     )
   } else {
     await interaction.reply(
@@ -92,7 +92,7 @@ async function remove(interaction: ChatInputCommandInteraction) {
 
   if (result.rows) {
     await interaction.reply(
-      "✅ This channel has been removed for daily questions!",
+      "This channel has been removed for daily questions!",
     )
   } else {
     await interaction.reply("❌ This channel is not added for daily questions.")
@@ -118,12 +118,13 @@ async function submit(interaction: ChatInputCommandInteraction) {
     .values({
       question: interaction.options.getString("question")!,
       author: interaction.user.id,
+      guild: interaction.guild!.id,
     })
     .onConflictDoNothing()
 
-  if (result.affectedRows) {
+  if (result.rowsAffected) {
     await interaction.reply({
-      content: "✅ Your daily question has been submitted!",
+      content: "Your daily question has been submitted!",
       flags: MessageFlags.Ephemeral,
     })
   } else {

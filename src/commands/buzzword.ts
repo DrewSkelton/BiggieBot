@@ -70,7 +70,7 @@ async function add(interaction: ChatInputCommandInteraction) {
 
   const buzzword = interaction.options.getString("buzzword")?.toLowerCase()!
   const response = interaction.options.getString("response")!
-  
+
   await db.insert(buzzwords).values({
     guild: interaction.guild!.id,
     trigger: buzzword,
@@ -79,7 +79,7 @@ async function add(interaction: ChatInputCommandInteraction) {
   })
 
   await interaction.reply(
-    `✅ Added buzzword "${buzzword}" with response: "${response}".`,
+    `Added buzzword "${buzzword}" with response: "${response}".`,
   )
 }
 
@@ -95,8 +95,8 @@ async function remove(interaction: ChatInputCommandInteraction) {
       ),
     )
 
-  if (result.affectedRows)
-    await interaction.reply(`✅ Removed buzzword "${buzzword}".`)
+  if (result.rowsAffected)
+    await interaction.reply(`Removed buzzword "${buzzword}".`)
   else
     await interaction.reply(
       "❌ Could not find a buzzword owned by you which matches",
