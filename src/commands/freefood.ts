@@ -1,4 +1,8 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js"
+import {
+  APIEmbed,
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+} from "discord.js"
 
 export const command = new SlashCommandBuilder()
   .setName("freefood")
@@ -14,21 +18,19 @@ export const command = new SlashCommandBuilder()
 export async function execute(interaction: ChatInputCommandInteraction) {
   await interaction.deferReply()
 
-  const eventLinks = await fetchEngage(
+  const embeds: APIEmbed[] = await fetchEngage(
     interaction.options.getInteger("days_ahead") || 0,
   )
 
-  if (eventLinks.length === 0) {
-    await interaction.followUp("Could not find any free food :cry:")
+  if (embeds.length === 0) {
+    const embed: APIEmbed = {
+      title: ":x: Could not find any free food events",
+    }
+    await interaction.followUp({ embeds: [embed] })
     return
   }
 
-  let reply = ""
-  for (const link of eventLinks) {
-    reply += link + "\n"
-  }
-
-  await interaction.followUp(reply)
+  await interaction.followUp({ embeds: embeds })
 }
 
 async function fetchEngage(days_ahead: number) {
@@ -44,9 +46,7 @@ async function fetchEngage(days_ahead: number) {
     now.getDate() + days_ahead + 1,
   )
 
-  console.log(dateTo)
-
-  const eventLinks: string[] = []
+  const embeds: APIEmbed[] = []
 
   try {
     const responses = []
@@ -60,15 +60,10 @@ async function fetchEngage(days_ahead: number) {
       }
       const json: any = await response.json()
       responses.push(json)
-      console.log(json)
 
       rightDate.setDate(rightDate.getDate() + 1)
       leftDate.setDate(leftDate.getDate() + 1)
     }
-
-    console.log(
-      `https://ou.campuslabs.com/engage/api/discovery/event/search?endsAfter=${leftDate.toISOString()}&startsBefore=${dateTo.toISOString()}`,
-    )
 
     for (const json of responses) {
       for (const event of json.value) {
@@ -76,29 +71,29 @@ async function fetchEngage(days_ahead: number) {
           event.benefitNames.includes("Free Food") ||
           stringContainsFood(event.description)
         ) {
-          const today = new Date().getDate()
-          const tomorrow = new Date().getDate() + 1
-          const eventDate = new Date(event.startsOn).getDate()
-          const formattedDate =
-            eventDate === today
-              ? "Today"
-              : eventDate === tomorrow
-                ? "Tomorrow"
-                : new Date(event.startsOn).toLocaleDateString(undefined, {
-                    weekday: "long",
-                  })
-          eventLinks.push(
-            `## [${event.name}](https://ou.campuslabs.com/engage/event/${event.id})\n` +
-              //Discord date formatters use seconds instead of milliseconds
-              `${formattedDate}, <t:${Math.floor(Date.parse(event.startsOn) / 1000)}:t>-<t:${Math.floor(Date.parse(event.endsOn) / 1000)}:t> at **${event.location}**`,
-          )
+          // Create the fancy message
+          const embed: APIEmbed = {
+            title: event.name,
+            url: `https://ou.campuslabs.com/engage/event/${event.id}`,
+            thumbnail: {
+              url: `https://se-images.campuslabs.com/clink/images/${event.imagePath || event.organizationProfilePicture}`,
+            },
+            fields: [
+              {
+                name: "Time",
+                value: `<t:${Math.floor(Date.parse(event.startsOn) / 1000)}:t>-<t:${Math.floor(Date.parse(event.endsOn) / 1000)}:t> (<t:${Math.floor(Date.parse(event.startsOn) / 1000)}:R>)`,
+              },
+              { name: "Location", value: event.location },
+            ],
+          }
+          embeds.push(embed)
         }
       }
     }
   } catch (error) {
     console.error(error)
   }
-  return eventLinks
+  return embeds
 }
 
 function stringContainsFood(str: string): boolean {
