@@ -8,6 +8,13 @@
       "when": 1765484112811,
       "tag": "0000_mature_tenebrous",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1766874321967,
+      "tag": "0001_dry_meteorite",
+      "breakpoints": true
     }
   ]
 }
