@@ -24,7 +24,8 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
   if (embeds.length === 0) {
     const embed: APIEmbed = {
-      title: ":x: Could not find any free food events",
+      color: 0xffff00, // Yellow
+      description: "Could not find any events with free food.",
     }
     await interaction.followUp({ embeds: [embed] })
     return
