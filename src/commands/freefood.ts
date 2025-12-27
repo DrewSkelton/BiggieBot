@@ -1,8 +1,5 @@
-import {
-  APIEmbed,
-  ChatInputCommandInteraction,
-  SlashCommandBuilder,
-} from "discord.js"
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js"
+import type { APIEmbed } from "discord.js"
 
 export const command = new SlashCommandBuilder()
   .setName("freefood")

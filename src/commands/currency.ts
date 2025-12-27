@@ -1,10 +1,10 @@
 import {
-  APIEmbed,
   ChatInputCommandInteraction,
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js"
+import type { APIEmbed } from "discord.js"
 import { db } from "../database.js"
 import { and, eq, isNull, or } from "drizzle-orm"
 import { currencySettings, userBalances } from "../schema/currency.js"
