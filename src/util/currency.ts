@@ -12,6 +12,16 @@ export async function addCurrency(
   user: User,
   guild: Guild | null,
 ): Promise<{ success: boolean; embed: APIEmbed }> {
+  if (user.bot)
+    return {
+      success: false,
+      embed: {
+        color: 0xff0000,
+        title: "Error",
+        description: "Bots do not have a balance.",
+      },
+    }
+
   const currencySettingsList = await db
     .select()
     .from(currencySettings)
