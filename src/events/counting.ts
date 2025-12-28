@@ -3,6 +3,7 @@ import { evaluate, unequal } from "mathjs/number"
 import { db } from "../database.js"
 import { countingChannels } from "../schema/counting.js"
 import { and, eq, lt } from "drizzle-orm"
+import { addCurrency } from "../util/currency.js"
 
 export const on = Events.MessageCreate
 
@@ -90,6 +91,8 @@ export async function execute(message: Message) {
         ),
       )
     await message.react("✅")
+
+    await addCurrency(row.count! + 1, message.author, message.guild)
   }
 }
 
