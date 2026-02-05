@@ -5,6 +5,7 @@ import {
   Collection,
   Events,
   GatewayIntentBits,
+  Partials,
   REST,
   RESTPostAPIApplicationCommandsJSONBody,
   Routes,
@@ -40,6 +41,7 @@ const client = Object.assign(
       GatewayIntentBits.GuildMessages,
       GatewayIntentBits.MessageContent,
     ],
+    partials: [Partials.Channel, Partials.Message, Partials.GuildMember],
   }),
   {
     commands: new Collection(),
