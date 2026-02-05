@@ -4,6 +4,7 @@ import { db } from "../database.js"
 import { countingChannels } from "../schema/counting.js"
 import { and, eq, lt } from "drizzle-orm"
 import { addCurrency } from "../util/currency.js"
+import { parseStringToExpression } from "../util/math.js"
 
 export const on = Events.MessageCreate
 
@@ -25,15 +26,11 @@ export async function execute(message: Message) {
   // Try to interpret the content as a number, Roman numeral, or math expression
   let number: number | undefined
 
-  // Try to parse as a Roman numeral
-  if (/^[IVXLCDM]+$/.test(content)) {
-    number = parseRomanNumeral(content)
-  } else
-    try {
-      number = evaluate(content.toLowerCase())
-    } catch {
-      /* empty */
-    }
+  try {
+    number = evaluate(parseStringToExpression(content))
+  } catch {
+    /* empty */
+  }
 
   // If we couldn't parse as any valid format, don't react
   if (number == undefined) {
