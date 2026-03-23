@@ -89,7 +89,7 @@ const ROMAN_MAP: Record<string, number> = {
 }
 // Replace every instance of a roman numeral to it's integer equivalent
 function replaceRomanNumeralsWithNumbers(str: string): string {
-  const roman_numeral_matches = str.matchAll(/[IVXLCDM]+/g)
+  const roman_numeral_matches = str.matchAll(/\b([IVXLCDM])+\b/g)
 
   for (const roman_numeral_match of roman_numeral_matches) {
     const roman_numeral = roman_numeral_match[0]
