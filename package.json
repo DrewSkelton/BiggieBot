@@ -11,30 +11,24 @@
     "migrate": "npx drizzle-kit generate --config drizzle.config.js"
   },
   "dependencies": {
-    "@libsql/client": "^0.15.15",
-    "discord.js": "^14.25.1",
-    "dotenv": "^16.6.1",
-    "drizzle-orm": "^0.44.7",
-    "mathjs": "^14.9.1",
-    "node-cron": "^3.0.3"
+    "@libsql/client": "^0.17.4",
+    "discord.js": "^14.27.0",
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
+    "mathjs": "^15.2.0",
+    "node-cron": "^4.6.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.28.0",
-    "@types/node": "^22.19.2",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.1.2",
     "@types/node-cron": "^3.0.11",
-    "drizzle-kit": "^0.31.8",
-    "globals": "^16.5.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.49.0"
+    "drizzle-kit": "^0.31.10",
+    "globals": "^17.9.0",
+    "prettier": "^3.9.6",
+    "tsx": "^4.23.9",
+    "typescript": "^7.0.2"
   },
   "prettier": {
     "semi": false
-  },
-  "lint-staged": {
-    "*.{js,ts,json}": "prettier --write"
   }
 }
