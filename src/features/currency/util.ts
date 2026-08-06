@@ -1,7 +1,7 @@
 import { Guild, User } from "discord.js"
 import type { APIEmbed } from "discord.js"
-import { db } from "../database.js"
-import { currencySettings, userBalances } from "../schema/currency.js"
+import { db } from "../../shared.js"
+import { currencySettings, userBalances } from "./schema.js"
 import { eq, sql } from "drizzle-orm"
 
 // Adds or subtracts currency from a user

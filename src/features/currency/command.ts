@@ -5,10 +5,10 @@ import {
   SlashCommandBuilder,
 } from "discord.js"
 import type { APIEmbed } from "discord.js"
-import { db } from "../database.js"
+import { db } from "../../shared.js"
 import { and, eq, isNull, or } from "drizzle-orm"
-import { currencySettings, userBalances } from "../schema/currency.js"
-import { addCurrency } from "../util/currency.js"
+import { currencySettings, userBalances } from "./schema.js"
+import { addCurrency } from "./util.js"
 
 export const command = new SlashCommandBuilder()
   .setName("currency")

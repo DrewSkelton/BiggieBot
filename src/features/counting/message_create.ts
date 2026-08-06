@@ -1,10 +1,10 @@
 import { Events, Message, TextChannel } from "discord.js"
 import { evaluate, unequal } from "mathjs/number"
-import { db } from "../database.js"
-import { countingChannels } from "../schema/counting.js"
+import { db } from "../../shared.js"
+import { countingChannels } from "./schema.js"
 import { and, eq, lt } from "drizzle-orm"
-import { addCurrency } from "../util/currency.js"
-import { parseStringToExpression } from "../util/math.js"
+import { addCurrency } from "../currency/util.js"
+import { parseStringToExpression } from "../../util/math.js"
 
 export const on = Events.MessageCreate
 

@@ -1,6 +1,6 @@
 import { Events, Message, TextChannel } from "discord.js"
-import { db } from "../database.js"
-import { countingChannels } from "../schema/counting.js"
+import { db } from "../../shared.js"
+import { countingChannels } from "./schema.js"
 import { eq } from "drizzle-orm"
 
 export const on = Events.MessageDelete

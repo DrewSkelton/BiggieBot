@@ -1,7 +1,7 @@
 import { Events, Message } from "discord.js"
-import { buzzwords } from "../schema/buzzwords.js"
+import { buzzwords } from "./schema.js"
 import { eq } from "drizzle-orm"
-import { db } from "../database.js"
+import { db } from "../../shared.js"
 
 export const on = Events.MessageCreate
 

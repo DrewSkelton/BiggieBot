@@ -2,12 +2,12 @@
   "name": "biggiebot",
   "version": "1.0.0",
   "description": "A simple Discord bot with multiple features",
-  "main": "src/index.ts",
+  "main": "src/main.ts",
   "type": "module",
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "start": "node dist/index.js",
-    "dev": "tsx watch src/index.ts",
+    "start": "node dist/main.js",
+    "dev": "tsx watch src/main.ts",
     "migrate": "npx drizzle-kit generate --config drizzle.config.js"
   },
   "dependencies": {

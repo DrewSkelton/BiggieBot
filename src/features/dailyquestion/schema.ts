@@ -4,11 +4,8 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js"
-import { db } from "../database.js"
-import {
-  dailyQuestionChannels,
-  dailyQuestions,
-} from "../schema/dailyquestions.js"
+import { db } from "../../shared.js"
+import { dailyQuestionChannels, dailyQuestions } from "./dailyquestions.js"
 import { eq } from "drizzle-orm"
 
 const limit = 3

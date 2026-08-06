@@ -3,9 +3,9 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js"
-import { db } from "../database.js"
+import { db } from "../../shared.js"
 import { and, eq } from "drizzle-orm"
-import { buzzwords } from "../schema/buzzwords.js"
+import { buzzwords } from "./schema.js"
 
 const permission = PermissionFlagsBits.ManageGuild
 const limit = 5

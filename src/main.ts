@@ -11,6 +11,7 @@ import {
   Routes,
 } from "discord.js"
 import "dotenv/config"
+import { Event, SlashCommand } from "./shared.js"
 
 // Helper function to recurse through an entire directory for commands or events
 function* recurseDirectory(searchPath: string): Generator<string> {
@@ -22,8 +23,8 @@ function* recurseDirectory(searchPath: string): Generator<string> {
       yield* recurseDirectory(path.join(searchPath, dirent.name))
     } else if (
       dirent.isFile() &&
-      dirent.name != "index.js" &&
-      dirent.name != "index.ts" && // TODO: Update this to use dynamic name
+      dirent.name != "main.js" &&
+      dirent.name != "main.ts" && // TODO: Update this to use dynamic name
       (path.extname(dirent.name) == ".js" || path.extname(dirent.name) == ".ts")
     ) {
       yield path.join(searchPath, dirent.name)
@@ -53,9 +54,36 @@ const commands: RESTPostAPIApplicationCommandsJSONBody[] = []
 
 // Create events
 for (const file of files) {
-  const imp = await import(file)
+  // Relative path name for logging
+  const relative = path.relative(import.meta.dirname, file)
 
-  if (imp.execute) {
+  for (const value of Object.values(await import(file))) {
+    if (value instanceof SlashCommand) {
+      commands.push(value.data.toJSON())
+      client.commands.set(value.data.name, value.execute)
+      console.log(`Created the ${value.data.name} command`)
+    } else if (value instanceof Event) {
+      if (value.once) {
+        client.once(value.event, (...args) =>
+          value
+            .execute(...args)
+            .then()
+            .catch(console.error),
+        )
+        console.log(`Created a one-time ${value.event} event for ${relative}`)
+      } else {
+        client.on(value.event, (...args) =>
+          value
+            .execute(...args)
+            .then()
+            .catch(console.error),
+        )
+        console.log(`Created a ${value.event} event for ${relative}`)
+      }
+    }
+  }
+
+  /*if (imp.execute) {
     if (imp.command) {
       commands.push(imp.command.toJSON())
       client.commands.set(imp.command.name, imp)
@@ -75,7 +103,7 @@ for (const file of files) {
           .catch(console.error),
       )
     }
-  }
+    }*/
 }
 
 // Create command handler
@@ -88,19 +116,20 @@ client.on(Events.InteractionCreate, async (interaction) => {
     return
   }
 
-  try {
-    await command.execute(interaction)
-  } catch (error) {
-    console.error(error)
-    try {
-      // Intentionally send an incorrect message to get Discord's default error message sent to the client
-      if (interaction.replied || interaction.deferred) {
-        await interaction.followUp("")
-      } else {
-        await interaction.reply("")
-      }
-    } catch {}
-  }
+  command(interaction)
+    .then()
+    .catch(async (error: any) => {
+      console.error(error)
+
+      try {
+        // Intentionally send an incorrect message to get Discord's default error message sent to the client
+        if (interaction.replied || interaction.deferred) {
+          await interaction.followUp("")
+        } else {
+          await interaction.reply("")
+        }
+      } catch {}
+    })
 })
 
 await client.login(process.env.DISCORD_TOKEN?.trim())
@@ -114,7 +143,7 @@ const rest = new REST().setToken(client.token!)
       body: commands,
     })
 
-    console.log(`Successfully reloaded ${commands.length} slash commands.`)
+    console.log(`Successfully reloaded ${commands.length} slash commands`)
   } catch (error) {
     console.error(error)
   }

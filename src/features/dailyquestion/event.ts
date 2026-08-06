@@ -1,10 +1,7 @@
 import { Client, Events, TextChannel } from "discord.js"
 import cron from "node-cron"
-import { db } from "../database.js"
-import {
-  dailyQuestionChannels,
-  dailyQuestions,
-} from "../schema/dailyquestions.js"
+import { db } from "../../shared.js"
+import { dailyQuestionChannels, dailyQuestions } from "./dailyquestions.js"
 import { eq, min } from "drizzle-orm"
 
 export const once = Events.ClientReady

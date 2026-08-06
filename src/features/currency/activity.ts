@@ -1,5 +1,5 @@
 import { Events, Message } from "discord.js"
-import { addCurrency } from "../util/currency.js"
+import { addCurrency } from "./util.js"
 
 // Adds money to users who are active with messages
 
