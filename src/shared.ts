@@ -1,4 +1,10 @@
-import { ClientEvents, SlashCommandBuilder } from "discord.js"
+import {
+  ChatInputCommandInteraction,
+  ClientEvents,
+  SlashCommandBuilder,
+  SlashCommandOptionsOnlyBuilder,
+  SlashCommandSubcommandsOnlyBuilder,
+} from "discord.js"
 import { migrate } from "drizzle-orm/libsql/migrator"
 import { drizzle } from "drizzle-orm/libsql/sqlite3"
 
@@ -20,12 +26,18 @@ export class Event<Event extends keyof ClientEvents> {
 }
 
 export class SlashCommand {
-  data: SlashCommandBuilder
-  execute: (...args: any) => Promise<void>
+  data:
+    | SlashCommandBuilder
+    | SlashCommandOptionsOnlyBuilder
+    | SlashCommandSubcommandsOnlyBuilder
+  execute: (interaction: ChatInputCommandInteraction) => Promise<void>
 
   constructor(
-    data: SlashCommandBuilder,
-    execute: (...args: any) => Promise<void>,
+    data:
+      | SlashCommandBuilder
+      | SlashCommandOptionsOnlyBuilder
+      | SlashCommandSubcommandsOnlyBuilder,
+    execute: (interaction: ChatInputCommandInteraction) => Promise<void>,
   ) {
     this.data = data
     this.execute = execute

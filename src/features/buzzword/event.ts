@@ -1,11 +1,9 @@
 import { Events, Message } from "discord.js"
 import { buzzwords } from "./schema.js"
 import { eq } from "drizzle-orm"
-import { db } from "../../shared.js"
+import { db, Event } from "../../shared.js"
 
-export const on = Events.MessageCreate
-
-export async function execute(message: Message) {
+export default new Event(Events.MessageCreate, async (message: Message) => {
   if (message.author.bot) return
 
   const rows = await db
@@ -19,4 +17,4 @@ export async function execute(message: Message) {
       await message.reply(buzzword.response)
     }
   }
-}
+})

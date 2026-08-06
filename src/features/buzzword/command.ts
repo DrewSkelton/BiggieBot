@@ -3,69 +3,72 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js"
-import { db } from "../../shared.js"
+import { db, SlashCommand } from "../../shared.js"
 import { and, eq } from "drizzle-orm"
 import { buzzwords } from "./schema.js"
 
 const permission = PermissionFlagsBits.ManageGuild
 const limit = 5
 
-export const command = new SlashCommandBuilder()
-  .setName("buzzword")
-  .setDescription("Manages buzzwords")
-  .addSubcommand((add) =>
-    add
-      .setName("add")
-      .setDescription(
-        `Adds a new buzzword and response (limit: ${limit} per user).`,
-      )
-      .addStringOption((option) =>
-        option
-          .setName("buzzword")
-          .setDescription("The phrase to listen for.")
-          .setRequired(true),
-      )
-      .addStringOption((option) =>
-        option
-          .setName("response")
-          .setDescription("What to respond with.")
-          .setRequired(true),
-      ),
-  )
-  .addSubcommand((remove) =>
-    remove
-      .setName("remove")
-      .setDescription("Removes a buzzword you've created.")
-      .addStringOption((option) =>
-        option
-          .setName("buzzword")
-          .setDescription("The buzzword to remove.")
-          .setRequired(true),
-      ),
-  )
-  .addSubcommand((list) =>
-    list
-      .setName("list")
-      .setDescription("Lists all buzzwords and their responses."),
-  )
+export default new SlashCommand(
+  new SlashCommandBuilder()
+    .setName("buzzword")
+    .setDescription("Manages buzzwords")
+    .addSubcommand((add) =>
+      add
+        .setName("add")
+        .setDescription(
+          `Adds a new buzzword and response (limit: ${limit} per user).`,
+        )
+        .addStringOption((option) =>
+          option
+            .setName("buzzword")
+            .setDescription("The phrase to listen for.")
+            .setRequired(true),
+        )
+        .addStringOption((option) =>
+          option
+            .setName("response")
+            .setDescription("What to respond with.")
+            .setRequired(true),
+        ),
+    )
+    .addSubcommand((remove) =>
+      remove
+        .setName("remove")
+        .setDescription("Removes a buzzword you've created.")
+        .addStringOption((option) =>
+          option
+            .setName("buzzword")
+            .setDescription("The buzzword to remove.")
+            .setRequired(true),
+        ),
+    )
+    .addSubcommand((list) =>
+      list
+        .setName("list")
+        .setDescription("Lists all buzzwords and their responses."),
+    ),
 
-export async function execute(interaction: ChatInputCommandInteraction) {
-  switch (interaction.options.getSubcommand()) {
-    case "add":
-      return add(interaction)
-    case "remove":
-      return remove(interaction)
-    case "list":
-      return list(interaction)
-  }
-}
+  async (interaction: ChatInputCommandInteraction) => {
+    switch (interaction.options.getSubcommand()) {
+      case "add":
+        await add(interaction)
+      case "remove":
+        await remove(interaction)
+      case "list":
+        await list(interaction)
+    }
+  },
+)
 
 async function add(interaction: ChatInputCommandInteraction) {
   if (
     !interaction.memberPermissions?.has(permission) &&
     (await getBuzzwordCount(interaction)) >= limit
   ) {
-    return interaction.reply(`❌ You can only add up to ${limit} buzzwords.`)
+    await interaction.reply(`❌ You can only add up to ${limit} buzzwords.`)
+    return
   }
 
   const buzzword = interaction.options.getString("buzzword")?.toLowerCase()!

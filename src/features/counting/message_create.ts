@@ -1,14 +1,13 @@
 import { Events, Message, TextChannel } from "discord.js"
 import { evaluate, unequal } from "mathjs/number"
-import { db } from "../../shared.js"
+import { db, Event } from "../../shared.js"
 import { countingChannels } from "./schema.js"
 import { and, eq, lt } from "drizzle-orm"
 import { addCurrency } from "../currency/util.js"
 import { parseStringToExpression } from "../../util/math.js"
 
-export const on = Events.MessageCreate
 
-export async function execute(message: Message) {
+export default new Event(Events.MessageCreate, async (message: Message) => {
   if (message.author.bot) return
 
   const row = (
@@ -28,9 +27,7 @@ export async function execute(message: Message) {
 
   try {
     number = evaluate(parseStringToExpression(content))
-  } catch {
-    /* empty */
-  }
+  } catch {}
 
   // If we couldn't parse as any valid format, don't react
   if (number == undefined) {
@@ -91,7 +88,7 @@ export async function execute(message: Message) {
 
     await addCurrency(row.count! + 1, message.author, message.guild)
   }
-}
+})
 
 // Parse Roman numeral to integer
 function parseRomanNumeral(str: string): number {

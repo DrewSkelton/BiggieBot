@@ -1,35 +1,37 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js"
-import { PlayingCard, PlayingCardDeck } from "../util/cards.js"
-import { title } from "process"
+import { PlayingCardDeck } from "../util/cards.js"
+import { SlashCommand } from "../shared.js"
 
-export const command = new SlashCommandBuilder()
-  .setName("card")
-  .setDescription("Play with cards.")
-  .addSubcommand((draw) =>
-    draw
-      .setName("draw")
-      .setDescription("Draw a card.")
-      .addIntegerOption((option) =>
-        option
-          .setName("amount")
-          .setDescription("The amount of cards to draw")
-          .setMinValue(1)
-          .setMaxValue(52),
-      ),
-  )
-  .addSubcommand((shuffle) =>
-    shuffle.setName("shuffle").setDescription("Create a new deck"),
-  )
 const decks = new Map<string, PlayingCardDeck>()
 
-export async function execute(interaction: ChatInputCommandInteraction) {
-  switch (interaction.options.getSubcommand()) {
-    case "draw":
-      return draw(interaction)
-    case "shuffle":
-      return shuffle(interaction)
+export default new SlashCommand(
+  new SlashCommandBuilder()
+    .setName("card")
+    .setDescription("Play with cards.")
+    .addSubcommand((draw) =>
+      draw
+        .setName("draw")
+        .setDescription("Draw a card.")
+        .addIntegerOption((option) =>
+          option
+            .setName("amount")
+            .setDescription("The amount of cards to draw")
+            .setMinValue(1)
+            .setMaxValue(52),
+        ),
+    )
+    .addSubcommand((shuffle) =>
+      shuffle.setName("shuffle").setDescription("Create a new deck"),
+    ),
+  async (interaction: ChatInputCommandInteraction) => {
+    switch (interaction.options.getSubcommand()) {
+      case "draw":
+        await draw(interaction)
+      case "shuffle":
+        await shuffle(interaction)
+    }
   }
-}
+)
 
 async function draw(interaction: ChatInputCommandInteraction) {
   const amount = interaction.options.getInteger("amount") || 1

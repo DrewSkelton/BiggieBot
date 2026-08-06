@@ -4,49 +4,58 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js"
-import { db } from "../../shared.js"
+import { db, SlashCommand } from "../../shared.js"
 import { countingChannels } from "./schema.js"
 import { eq } from "drizzle-orm"
 
-export const command = new SlashCommandBuilder()
-  .setName("counting")
-  .setDescription("Manages counting.")
-  .addSubcommand((highscore) =>
-    highscore
-      .setName("highscore")
-      .setDescription("Returns the highest count achieved in this channel."),
-  )
-  .addSubcommand((set) =>
-    set.setName("set").setDescription("Sets the current channel for counting."),
-  )
-  .addSubcommand((remove) =>
-    remove
-      .setName("remove")
-      .setDescription("Removes the current channel from counting.")
-      .addBooleanOption((option) =>
-        option
-          .setName("all")
-          .setDescription("Removes every channel from counting."),
-      ),
-  )
+export default new SlashCommand(
+  new SlashCommandBuilder()
+    .setName("counting")
+    .setDescription("Manages counting.")
+    .addSubcommand((highscore) =>
+      highscore
+        .setName("highscore")
+        .setDescription("Returns the highest count achieved in this channel."),
+    )
+    .addSubcommand((set) =>
+      set
+        .setName("set")
+        .setDescription("Sets the current channel for counting."),
+    )
+    .addSubcommand((remove) =>
+      remove
+        .setName("remove")
+        .setDescription("Removes the current channel from counting.")
+        .addBooleanOption((option) =>
+          option
+            .setName("all")
+            .setDescription("Removes every channel from counting."),
+        ),
+    ),
 
-export async function execute(interaction: ChatInputCommandInteraction) {
-  switch (interaction.options.getSubcommand()) {
-    case "highscore":
-      return highscore(interaction)
-    case "set":
-      return set(interaction)
-    case "remove":
-      return remove(interaction)
-  }
-}
+  async (interaction) => {
+    switch (interaction.options.getSubcommand()) {
+      case "highscore":
+        await highscore(interaction)
+        break
+      case "set":
+        await set(interaction)
+        break
+      case "remove":
+        await remove(interaction)
+        break
+    }
+  },
+)
 
 async function set(interaction: ChatInputCommandInteraction) {
-  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels))
-    return interaction.reply({
+  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels)) {
+    await interaction.reply({
       content: "❌ You do not have permission to manage channels.",
       flags: MessageFlags.Ephemeral,
     })
+    return
+  }
 
   const rows = await db
     .insert(countingChannels)
@@ -61,11 +70,13 @@ async function set(interaction: ChatInputCommandInteraction) {
 }
 
 async function remove(interaction: ChatInputCommandInteraction) {
-  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels))
-    return interaction.reply({
+  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels)) {
+    await interaction.reply({
       content: "❌ You do not have permission to manage channels.",
       flags: MessageFlags.Ephemeral,
     })
+    return
+  }
 
   const result = await db
     .delete(countingChannels)

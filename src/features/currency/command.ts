@@ -5,105 +5,107 @@ import {
   SlashCommandBuilder,
 } from "discord.js"
 import type { APIEmbed } from "discord.js"
-import { db } from "../../shared.js"
+import { db, SlashCommand } from "../../shared.js"
 import { and, eq, isNull, or } from "drizzle-orm"
 import { currencySettings, userBalances } from "./schema.js"
 import { addCurrency } from "./util.js"
 
-export const command = new SlashCommandBuilder()
-  .setName("currency")
-  .setDescription("Manages currency.")
-  .addSubcommand((balance) =>
-    balance
-      .setName("balance")
-      .setDescription("View your balance.")
-      .addBooleanOption((option) =>
-        option
-          .setName("ephemeral")
-          .setDescription("Make your message invisible to others."),
-      ),
-  )
-  .addSubcommand((modify) =>
-    modify
-      .setName("modify")
-      .setDescription("Modify a user's currency.")
-      .addIntegerOption((option) =>
-        option
-          .setName("amount")
-          .setDescription("The amount to modify.")
-          .setRequired(true),
-      )
-      .addUserOption((option) =>
-        option.setName("user").setDescription("The user to modify."),
-      )
-      .addBooleanOption((option) =>
-        option
-          .setName("set")
-          .setDescription("Sets balance to 0 before modifying."),
-      ),
-  )
-  .addSubcommand((give) =>
-    give
-      .setName("give")
-      .setDescription("Give currency to another user.")
-      .addIntegerOption((option) =>
-        option
-          .setName("amount")
-          .setDescription("The amount to give.")
-          .setMinValue(1)
-          .setRequired(true),
-      )
-      .addUserOption((option) =>
-        option
-          .setName("user")
-          .setDescription("The user to give to.")
-          .setRequired(true),
-      ),
-  )
-  .addSubcommand((reset) =>
-    reset.setName("reset").setDescription("Reset everyone's balance."),
-  )
-  .addSubcommand((settings) =>
-    settings
-      .setName("settings")
-      .setDescription("Set the currency for the server.")
-      .addBooleanOption((option) =>
-        option
-          .setName("enabled")
-          .setDescription("Enables or disables currency in the server."),
-      )
-      .addStringOption((option) =>
-        option
-          .setName("name")
-          .setDescription("The singular name of the currency."),
-      )
-      .addStringOption((option) =>
-        option
-          .setName("plural_name")
-          .setDescription("The plural name of the currency."),
-      )
-      .addStringOption((option) =>
-        option
-          .setName("icon")
-          .setDescription("The icon of the currency (usually an emoji)."),
-      ),
-  )
 
-export async function execute(interaction: ChatInputCommandInteraction) {
-  switch (interaction.options.getSubcommand()) {
-    case "balance":
-      return balance(interaction)
-    case "give":
-      return give(interaction)
-    case "modify":
-      return modify(interaction)
-    case "reset":
-      return reset(interaction)
-    case "settings":
-      return settings(interaction)
-  }
-}
+export default new SlashCommand(
+  new SlashCommandBuilder()
+    .setName("currency")
+    .setDescription("Manages currency.")
+    .addSubcommand((balance) =>
+      balance
+        .setName("balance")
+        .setDescription("View your balance.")
+        .addBooleanOption((option) =>
+          option
+            .setName("ephemeral")
+            .setDescription("Make your message invisible to others."),
+        ),
+    )
+    .addSubcommand((modify) =>
+      modify
+        .setName("modify")
+        .setDescription("Modify a user's currency.")
+        .addIntegerOption((option) =>
+          option
+            .setName("amount")
+            .setDescription("The amount to modify.")
+            .setRequired(true),
+        )
+        .addUserOption((option) =>
+          option.setName("user").setDescription("The user to modify."),
+        )
+        .addBooleanOption((option) =>
+          option
+            .setName("set")
+            .setDescription("Sets balance to 0 before modifying."),
+        ),
+    )
+    .addSubcommand((give) =>
+      give
+        .setName("give")
+        .setDescription("Give currency to another user.")
+        .addIntegerOption((option) =>
+          option
+            .setName("amount")
+            .setDescription("The amount to give.")
+            .setMinValue(1)
+            .setRequired(true),
+        )
+        .addUserOption((option) =>
+          option
+            .setName("user")
+            .setDescription("The user to give to.")
+            .setRequired(true),
+        ),
+    )
+    .addSubcommand((reset) =>
+      reset.setName("reset").setDescription("Reset everyone's balance."),
+    )
+    .addSubcommand((settings) =>
+      settings
+        .setName("settings")
+        .setDescription("Set the currency for the server.")
+        .addBooleanOption((option) =>
+          option
+            .setName("enabled")
+            .setDescription("Enables or disables currency in the server."),
+        )
+        .addStringOption((option) =>
+          option
+            .setName("name")
+            .setDescription("The singular name of the currency."),
+        )
+        .addStringOption((option) =>
+          option
+            .setName("plural_name")
+            .setDescription("The plural name of the currency."),
+        )
+        .addStringOption((option) =>
+          option
+            .setName("icon")
+            .setDescription("The icon of the currency (usually an emoji)."),
+        ),
+    ),
 
+  async (interaction: ChatInputCommandInteraction) => {
+    switch (interaction.options.getSubcommand()) {
+      case "balance":
+        await balance(interaction)
+      case "give":
+        await give(interaction)
+      case "modify":
+        await modify(interaction)
+      case "reset":
+        await reset(interaction)
+      case "settings":
+        await settings(interaction)
+    }
+  },
+)
 async function balance(interaction: ChatInputCommandInteraction) {
   const ephemeral = interaction.options.getBoolean("ephemeral")
 

@@ -1,17 +1,15 @@
 import { Client, Events, TextChannel } from "discord.js"
 import cron from "node-cron"
-import { db } from "../../shared.js"
-import { dailyQuestionChannels, dailyQuestions } from "./dailyquestions.js"
+import { db, Event } from "../../shared.js"
+import { dailyQuestionChannels, dailyQuestions } from "./schema.js"
 import { eq, min } from "drizzle-orm"
 
-export const once = Events.ClientReady
-
-export async function execute(client: Client) {
+export default new Event(Events.ClientReady, async (client: Client) => {
   // Schedule a daily question at 9 AM
   cron.schedule("0 9 * * *", () => {
     askDailyQuestion(client)
   })
-}
+})
 
 async function askDailyQuestion(client: Client) {
   // The current daily question is the one at i 0

@@ -4,61 +4,66 @@ import {
   PermissionFlagsBits,
   SlashCommandBuilder,
 } from "discord.js"
-import { db } from "../../shared.js"
+import { db, SlashCommand } from "../../shared.js"
 import { dailyQuestionChannels, dailyQuestions } from "./schema.js"
 import { eq } from "drizzle-orm"
 
 const limit = 3
+export default new SlashCommand(
+  new SlashCommandBuilder()
+    .setName("dailyquestion")
+    .setDescription("Manages daily questions")
+    .addSubcommand((set) =>
+      set
+        .setName("set")
+        .setDescription("Sets the current channel to receive daily questions."),
+    )
+    .addSubcommand((remove) =>
+      remove
+        .setName("remove")
+        .setDescription(
+          "Removes the current channel from receiving daily questions.",
+        ),
+    )
+    .addSubcommand((get) =>
+      get.setName("get").setDescription("Get the current daily question."),
+    )
+    .addSubcommand((submit) =>
+      submit
+        .setName("submit")
+        .setDescription("Submits your daily question.")
+        .addStringOption((option) =>
+          option
+            .setName("question")
+            .setDescription("The question to submit.")
+            .setRequired(true),
+        ),
+    ),
 
-export const command = new SlashCommandBuilder()
-  .setName("dailyquestion")
-  .setDescription("Manages daily questions")
-  .addSubcommand((set) =>
-    set
-      .setName("set")
-      .setDescription("Sets the current channel to receive daily questions."),
-  )
-  .addSubcommand((remove) =>
-    remove
-      .setName("remove")
-      .setDescription(
-        "Removes the current channel from receiving daily questions.",
-      ),
-  )
-  .addSubcommand((get) =>
-    get.setName("get").setDescription("Get the current daily question."),
-  )
-  .addSubcommand((submit) =>
-    submit
-      .setName("submit")
-      .setDescription("Submits your daily question.")
-      .addStringOption((option) =>
-        option
-          .setName("question")
-          .setDescription("The question to submit.")
-          .setRequired(true),
-      ),
-  )
-
-export async function execute(interaction: ChatInputCommandInteraction) {
-  switch (interaction.options.getSubcommand()) {
-    case "set":
-      return set(interaction)
-    case "remove":
-      return remove(interaction)
-    case "get":
-      return get(interaction)
-    case "submit":
-      return submit(interaction)
+  async (interaction: ChatInputCommandInteraction) => {
+    switch (interaction.options.getSubcommand()) {
+      case "set":
+        await set(interaction)
+      case "remove":
+        await remove(interaction)
+      case "get":
+        await get(interaction)
+      case "submit":
+        await submit(interaction)
+    }
   }
-}
+)
+
 
 async function set(interaction: ChatInputCommandInteraction) {
-  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels))
-    return interaction.reply({
+  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels)) {
+    await interaction.reply({
       content: "❌ You do not have permission to manage channels.",
       flags: MessageFlags.Ephemeral,
     })
+    return
+  }
+
 
   const result = await db
     .insert(dailyQuestionChannels)
@@ -77,11 +82,13 @@ async function set(interaction: ChatInputCommandInteraction) {
 }
 
 async function remove(interaction: ChatInputCommandInteraction) {
-  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels))
-    return interaction.reply({
+  if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageChannels)) {
+    await interaction.reply({
       content: "❌ You do not have permission to manage channels.",
       flags: MessageFlags.Ephemeral,
     })
+    return
+  }
 
   const result = await db
     .delete(dailyQuestionChannels)
@@ -139,8 +146,8 @@ async function get(interaction: ChatInputCommandInteraction) {
     .where(eq(dailyQuestions.i, 0))
 
   if (rows.at(0)) {
-    return interaction.reply(rows.at(0)!.question)
+    await interaction.reply(rows.at(0)!.question)
   } else {
-    return interaction.reply("❌ There is no daily question today")
+    await interaction.reply("❌ There is no daily question today")
   }
 }

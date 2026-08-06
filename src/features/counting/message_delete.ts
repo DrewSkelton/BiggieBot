@@ -1,11 +1,9 @@
 import { Events, Message, TextChannel } from "discord.js"
-import { db } from "../../shared.js"
+import { db, Event } from "../../shared.js"
 import { countingChannels } from "./schema.js"
 import { eq } from "drizzle-orm"
 
-export const on = Events.MessageDelete
-
-export async function execute(message: Message) {
+export default new Event(Events.MessageDelete, async (message: Message) => {
   if (message.author.bot) return
 
   const row = (
@@ -25,4 +23,4 @@ export async function execute(message: Message) {
       `:rotating_light: ${message.author} has deleted their message! The current count is **${row.count}**! :rotating_light:`,
     )
   }
-}
+})
