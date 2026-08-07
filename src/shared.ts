@@ -5,14 +5,11 @@ import {
   SlashCommandOptionsOnlyBuilder,
   SlashCommandSubcommandsOnlyBuilder,
 } from "discord.js"
-import { migrate } from "drizzle-orm/libsql/migrator"
 import { drizzle } from "drizzle-orm/libsql/sqlite3"
 
 export const db = drizzle(process.env.SQLITE_URL || "file:database.sqlite3", {
   casing: "snake_case",
 })
-
-migrate(db, { migrationsFolder: "migrations" })
 
 export class Event<Event extends keyof ClientEvents> {
   event: Event

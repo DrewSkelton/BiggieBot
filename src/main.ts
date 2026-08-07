@@ -11,7 +11,8 @@ import {
   Routes,
 } from "discord.js"
 import "dotenv/config"
-import { Event, SlashCommand } from "./shared.js"
+import { db, Event, SlashCommand } from "./shared.js"
+import { migrate } from "drizzle-orm/libsql/migrator"
 
 // Helper function to recurse through an entire directory for commands or events
 function* recurseDirectory(searchPath: string): Generator<string> {
@@ -33,6 +34,9 @@ function* recurseDirectory(searchPath: string): Generator<string> {
 }
 
 const files = recurseDirectory("").toArray()
+
+// Migrate database
+await migrate(db, { migrationsFolder: "migrations" })
 
 //Client object
 const client = Object.assign(
