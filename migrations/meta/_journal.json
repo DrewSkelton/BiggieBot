@@ -15,6 +15,27 @@
       "when": 1766874321967,
       "tag": "0001_dry_meteorite",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1786130023125,
+      "tag": "0002_brainy_molten_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1786131257155,
+      "tag": "0003_thin_malcolm_colcord",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1786131447013,
+      "tag": "0004_exotic_cable",
+      "breakpoints": true
     }
   ]
 }

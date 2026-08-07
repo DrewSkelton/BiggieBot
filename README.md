@@ -56,66 +56,14 @@ npm run start
 ```
 dist/           # Transpiled TypeScript
 src/            # Application Source Code
-src/commands/   # Command Files
-src/events/     # Event Files
-src/utils/      # Utility Functions (Not directly registered by the bot)
-src/database.ts # Database entrypoint
-src/index.ts    # Main entrypoint
+src/features/   # Discord bot features
+src/main.ts     # Main entrypoint
+src/shared.ts   # Database, event registers, and other utilities
 ```
 
-### Adding New Event Listeners
+### Adding New Features
 
-Create a file `yourEvent.ts`/`yourEvent.js` in the `src/events/` folder:
-
-```ts
-
-// For an event that fires multiple times
-export const on = Events.*;
-
-// For event that fires once; only set one or the other
-export const once = Events.*;
-
-export async function execute(args...) {
-  //Event logic
-}
-```
-
-### Adding Commands
-
-Create a file `yourcommand.ts`/`yourcommand.js` in the `src/commands/` folder:
-
-```ts
-export const command = new SlashCommandBuilder()
-    .setName('yourcommand')
-    .setDescription('Command description')
-    // Any other options
-
-export async function execute(interaction: ChatInputCommandInteraction) {
-    await interaction.reply('Command response');
-};
-```
-
-### Adding Database Tables (Schemas)
-Create a file `yourSchema.ts`/`yourSchema.js` in the `src/schema/` folder:
-
-``` ts
-import { integer, sqliteTable, varchar } from "drizzle-orm/sqlite-core";
-
-export const users = sqliteTable('users', {
-  id: integer(),
-  first_name: varchar()
-})
-```
-
-### Interacting with the database:
-``` ts
-import { db } from "../database.js"
-
-await db.select().from(users);
-```
-** ENSURE MIGRATIONS ARE GENERATED BEFORE PUSHING WITH ```npm run migrate```!!!!**
-
-For more database information, visit [Drizzle](https://orm.drizzle.team/docs/).
+Refer to [src/features/example] for an example on how to write features.
 
 > The bot will update all commands and features on reload.
 > Currently running on Ben's server via Docker. New images are generated for each push.
