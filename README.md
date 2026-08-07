@@ -57,6 +57,7 @@ npm run start
 dist/           # Transpiled TypeScript
 src/            # Application Source Code
 src/features/   # Discord bot features
+src/util/       # Functions which don't belong to a single feature
 src/main.ts     # Main entrypoint
 src/shared.ts   # Database, event registers, and other utilities
 ```
