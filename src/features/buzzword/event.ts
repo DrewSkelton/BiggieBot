@@ -13,7 +13,9 @@ export default new Event(Events.MessageCreate, async (message: Message) => {
   if (!rows) return
 
   for (const buzzword of rows) {
-    if (message.content.toLowerCase().includes(buzzword.trigger)) {
+    if (buzzword.regex && message.content.match(buzzword.trigger)) {
+      await message.reply(buzzword.response)
+    } else if (message.content.toLowerCase().includes(buzzword.trigger)) {
       await message.reply(buzzword.response)
     }
   }

@@ -31,6 +31,14 @@ export default new SlashCommand(
             .setName("response")
             .setDescription("What to respond with.")
             .setRequired(true),
+        )
+        .addBooleanOption((option) =>
+          option
+            .setName("regex")
+            .setDescription(
+              "Match a regular expression instead of a substring.",
+            )
+            .setRequired(false),
         ),
     )
     .addSubcommand((remove) =>
@@ -76,12 +84,28 @@ async function add(interaction: ChatInputCommandInteraction) {
 
   const buzzword = interaction.options.getString("buzzword")?.toLowerCase()!
   const response = interaction.options.getString("response")!
+  const regex = interaction.options.getBoolean("regex", false)
+
+  // Check if the buzzword is valid Regex
+  if (regex) {
+    try {
+      new RegExp(buzzword)
+    } catch (error) {
+      if (error instanceof SyntaxError) {
+        await interaction.reply(error.message)
+        return
+      } else {
+        throw error
+      }
+    }
+  }
 
   await db.insert(buzzwords).values({
     guild: interaction.guild!.id,
     trigger: buzzword,
     response: response,
     owner: interaction.user.id,
+    regex: Number(regex)
   })
 
   await interaction.reply(

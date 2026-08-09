@@ -1,0 +1,1 @@
+ALTER TABLE `buzzwords` ADD `regex` integer DEFAULT 0 NOT NULL;
