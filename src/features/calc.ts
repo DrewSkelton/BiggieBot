@@ -45,5 +45,3 @@ export default new SlashCommand(
     }
   },
 )
-
-export async function execute(interaction: ChatInputCommandInteraction) {}
