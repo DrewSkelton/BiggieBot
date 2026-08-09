@@ -4,7 +4,7 @@ import { Event } from "../../shared.js"
 // Events are registered similarly in two parts:
 // 1. The event type
 // 2. The function to run when a message is sent
-// !!BE SURE TO IMPORT THE EVENT CLASS FROM "shared.js"!!
+// !!BE SURE TO IMPORT THE "Event" CLASS FROM "shared.js"!!
 // See https://discordjs.guide/legacy/app-creation/handling-events
 export default new Event(
   Events.MessageCreate,
