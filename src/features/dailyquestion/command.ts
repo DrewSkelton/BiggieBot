@@ -44,12 +44,16 @@ export default new SlashCommand(
     switch (interaction.options.getSubcommand()) {
       case "set":
         await set(interaction)
+        break
       case "remove":
         await remove(interaction)
+        break
       case "get":
         await get(interaction)
+        break
       case "submit":
         await submit(interaction)
+        break
     }
   }
 )

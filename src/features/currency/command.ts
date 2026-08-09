@@ -95,14 +95,19 @@ export default new SlashCommand(
     switch (interaction.options.getSubcommand()) {
       case "balance":
         await balance(interaction)
+        break
       case "give":
         await give(interaction)
+        break
       case "modify":
         await modify(interaction)
+        break
       case "reset":
         await reset(interaction)
+        break
       case "settings":
         await settings(interaction)
+        break
     }
   },
 )

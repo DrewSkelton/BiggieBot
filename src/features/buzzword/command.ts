@@ -54,10 +54,13 @@ export default new SlashCommand(
     switch (interaction.options.getSubcommand()) {
       case "add":
         await add(interaction)
+        break
       case "remove":
         await remove(interaction)
+        break
       case "list":
         await list(interaction)
+        break
     }
   },
 )
