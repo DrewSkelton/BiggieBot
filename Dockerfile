@@ -22,8 +22,5 @@ COPY package*.json .
 COPY migrations/ migrations/
 COPY drizzle.config.js .
 
-RUN mkdir database
-ENV SQLITE_URL=file:database/database.sqlite3
-
 RUN npm clean-install --only=production
 CMD ["npm", "run", "start"]
