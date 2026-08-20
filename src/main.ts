@@ -45,6 +45,7 @@ const client = Object.assign(
   new Client({
     intents: [
       GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildModeration,
       GatewayIntentBits.GuildMessages,
       GatewayIntentBits.MessageContent,
     ],
