@@ -43,6 +43,13 @@
       "when": 1786313075759,
       "tag": "0005_puzzling_glorian",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1787258297716,
+      "tag": "0006_nosy_argent",
+      "breakpoints": true
     }
   ]
 }
