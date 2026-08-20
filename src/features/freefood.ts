@@ -13,6 +13,12 @@ export const command = new SlashCommandBuilder()
   )
 
 export async function execute(interaction: ChatInputCommandInteraction) {
+  // Disable command functionality and respond with a message temporarily
+  await interaction.reply(
+    "Due to the change to OU's engage page, this command is currently unavailable. If you would like to help restore it, please consider contributing to BiggieBot at https://github.com/DrewSkelton/BiggieBot.",
+  )
+  return
+
   await interaction.deferReply()
 
   const embeds: APIEmbed[] = await fetchEngage(
