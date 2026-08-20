@@ -1,41 +1,44 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js"
 import type { APIEmbed } from "discord.js"
+import { SlashCommand } from "../shared.js"
 
-export const command = new SlashCommandBuilder()
-  .setName("freefood")
-  .setDescription("Lists all free food events on OU campus.")
+export default new SlashCommand(
+  new SlashCommandBuilder()
+    .setName("freefood")
+    .setDescription("Lists all free food events on OU campus.")
 
-  .addIntegerOption((option: any) =>
-    option
-      .setName("days_ahead")
-      .setDescription("The number of days ahead to look for free food.")
-      .setRequired(false),
-  )
+    .addIntegerOption((option: any) =>
+      option
+        .setName("days_ahead")
+        .setDescription("The number of days ahead to look for free food.")
+        .setRequired(false),
+    ),
 
-export async function execute(interaction: ChatInputCommandInteraction) {
-  // Disable command functionality and respond with a message temporarily
-  await interaction.reply(
-    "Due to the change to OU's engage page, this command is currently unavailable. If you would like to help restore it, please consider contributing to BiggieBot at https://github.com/DrewSkelton/BiggieBot.",
-  )
-  return
-
-  await interaction.deferReply()
-
-  const embeds: APIEmbed[] = await fetchEngage(
-    interaction.options.getInteger("days_ahead") || 0,
-  )
-
-  if (embeds.length === 0) {
-    const embed: APIEmbed = {
-      color: 0xffff00, // Yellow
-      description: "Could not find any events with free food.",
-    }
-    await interaction.followUp({ embeds: [embed] })
+  async (interaction: ChatInputCommandInteraction) => {
+    // Disable command functionality and respond with a message temporarily
+    await interaction.reply(
+      "Due to the change to OU's engage page, this command is currently unavailable. If you would like to help restore it, please consider contributing to BiggieBot at https://github.com/DrewSkelton/BiggieBot.",
+    )
     return
-  }
 
-  await interaction.followUp({ embeds: embeds })
-}
+    await interaction.deferReply()
+
+    const embeds: APIEmbed[] = await fetchEngage(
+      interaction.options.getInteger("days_ahead") || 0,
+    )
+
+    if (embeds.length === 0) {
+      const embed: APIEmbed = {
+        color: 0xffff00, // Yellow
+        description: "Could not find any events with free food.",
+      }
+      await interaction.followUp({ embeds: [embed] })
+      return
+    }
+
+    await interaction.followUp({ embeds: embeds })
+  },
+)
 
 async function fetchEngage(days_ahead: number) {
   const now = new Date()
