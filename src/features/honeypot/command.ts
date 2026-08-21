@@ -1,4 +1,5 @@
 import {
+  ChannelType,
   ChatInputCommandInteraction,
   PermissionFlagsBits,
   SlashCommandBuilder,
@@ -70,9 +71,10 @@ export default new SlashCommand(
 
 async function set(interaction: ChatInputCommandInteraction) {
   const channel =
-    interaction.options.getChannel("channel") || interaction.channel
+    interaction.options.getChannel("channel", false, [ChannelType.GuildText]) ||
+    interaction.channel
 
-  if (channel?.id == null) {
+  if (!channel || !interaction.guild) {
     await interaction.reply(":x: Not a valid channel")
     return
   }
@@ -91,23 +93,19 @@ async function set(interaction: ChatInputCommandInteraction) {
 
 async function unset(interaction: ChatInputCommandInteraction) {
   const channel =
-    interaction.options.getChannel("channel") || interaction.channel
+    interaction.options.getChannel("channel", false, [ChannelType.GuildText]) ||
+    interaction.channel
 
-  if (channel?.id == null) {
+  if (!channel || !interaction.guild) {
     await interaction.reply(":x: Not a valid channel")
     return
   }
 
   let channels = []
   if (interaction.options.getBoolean("all")) {
-    if (!interaction.guild?.channels) {
-      await interaction.reply(':x: Cannot use "all" if there are no channels')
-      return
-    } else {
-      for (const channel of interaction.guild.channels.cache || []) {
+    for (const channel of interaction.guild.channels.cache || []) {
         channels.push(channel[0])
       }
-    }
   } else {
     channels = [channel.id]
   }
@@ -117,7 +115,11 @@ async function unset(interaction: ChatInputCommandInteraction) {
     .where(inArray(honeypotTable.channel, channels))
 
   if (result.rowsAffected == 0) {
-    await interaction.reply(":x: This channel is not set")
+    if (interaction.options.getBoolean("all")) {
+      await interaction.reply(":x: There are no channels set")
+    } else {
+      await interaction.reply(":x: This channel is not set")
+    }
   } else {
     await interaction.reply(":white_check_mark: Success!")
   }
