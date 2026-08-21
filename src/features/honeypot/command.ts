@@ -14,7 +14,9 @@ export default new SlashCommand(
     .addSubcommand((option) =>
       option
         .setName("set")
-        .setDescription("Sets the channel to listen to.")
+        .setDescription(
+          "Set a channel to kick bots if they send a message to it.",
+        )
         .addChannelOption((option) =>
           option
             .setName("channel")
@@ -27,7 +29,7 @@ export default new SlashCommand(
     .addSubcommand((option) =>
       option
         .setName("unset")
-        .setDescription("Removes a channel to listen to.")
+        .setDescription("Unset a honeypot channel.")
         .addChannelOption((option) =>
           option
             .setName("channel")
@@ -37,11 +39,15 @@ export default new SlashCommand(
             .setRequired(false),
         )
         .addBooleanOption((option) =>
-          option.setName("all").setDescription("Remove every channel."),
+          option
+            .setName("all")
+            .setDescription("Remove every honeypot channel."),
         ),
     )
     .addSubcommand((option) =>
-      option.setName("list").setDescription("List what channels are honeypot."),
+      option
+        .setName("list")
+        .setDescription("List what channels are honeypots."),
     )
     .setDefaultMemberPermissions(
       PermissionFlagsBits.KickMembers + PermissionFlagsBits.ManageChannels,
