@@ -1,7 +1,10 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js"
 import { SlashCommand } from "../shared.js"
+import { readFile } from "fs/promises"
 
-let dictionary: string[]
+const dictionary = (await readFile("data/temple_os_vocab.txt"))
+  .toString()
+  .split("\n")
 
 export default new SlashCommand(
   new SlashCommandBuilder()
@@ -16,14 +19,6 @@ export default new SlashCommand(
         .setMinValue(1),
     ),
   async (interaction: ChatInputCommandInteraction) => {
-    // I'm lazy and don't want to store TempleOS's dictionary in the bot
-    if (!dictionary) {
-      const response = await fetch(
-        "https://raw.githubusercontent.com/Xe/TempleOS/1dd8859b7803355f41d75222d01ed42d5dda057f/Adam/God/Vocab.DD",
-      )
-      dictionary = (await response.text()).split("\n")
-    }
-
     const words = interaction.options.getInteger("words")
 
     let reply = "**He says:** "
