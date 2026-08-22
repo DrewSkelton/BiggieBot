@@ -9,6 +9,10 @@ export async function kickAndDeleteRecentMessages(
     await guild.members.kick(user)
     // The rest of the block will not execute if the user was not kicked
 
+    await user.send(
+      `You have been kicked from **${guild.name}** for suspected bot activity.`,
+    )
+
     for (const channel of guild.channels.cache) {
       if (channel[1].isTextBased()) {
         for (const message of channel[1].messages.cache) {
@@ -22,12 +26,11 @@ export async function kickAndDeleteRecentMessages(
       }
     }
 
-    await user.send(
-      `You have been kicked from **${guild.name}** for suspected bot activity.`,
-    )
-
     return true
   } catch {
+    console.debug(
+      "I have attempted to kick a user, but I lack sufficient permission",
+    )
     return false
   }
 }
