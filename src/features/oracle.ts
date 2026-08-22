@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js"
 import { SlashCommand } from "../shared.js"
-import { readFile } from "fs/promises"
+import { readFileSync } from "fs"
 
-const dictionary = (await readFile("data/temple_os_vocab.txt"))
+const dictionary = readFileSync("data/temple_os_vocab.txt")
   .toString()
   .split("\n")
 
